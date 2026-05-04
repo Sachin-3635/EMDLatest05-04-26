@@ -1,0 +1,312 @@
+.sidebar {
+  width: 200px;
+  background-color: black;
+  color: white;
+  // height: 100vh;
+  min-height: 100vh;
+  height: auto;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+  position: sticky;
+  top: 0;
+}
+
+.sidehead {
+  display: flex;
+  align-items: center;
+  padding: 2px 2px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.sidehead img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  max-width: 900px;
+  width: 100%;
+  text-align: left;
+}
+ 
+
+.logo {
+  font-size: 24px;
+  margin: 0px 0px 0px 10px;
+  font-weight: bold;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.sidehead-user {
+  display: flex;
+  align-items: center;
+  // padding: 10px 0px;
+  border-bottom: 1px solid hsla(0, 0%, 100%, .2);
+  font-weight: 600;
+}
+
+.sidehead-user i {
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 10px;
+  border-radius: 50%;
+}
+
+.sidehead-right{
+  margin-left: 10px;
+}
+
+.nav {
+  list-style: none;
+  padding: 0;
+  flex-grow: 1;
+  display: flex; // ✅ Ensures flexbox layout
+  flex-direction: column; // ✅ Stack items vertically
+}
+
+.nav-item {
+  margin: 0;
+  border-bottom: 3px solid hsla(249, 42%, 59%, 0.3);
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 20px !important;
+  color: #fff !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  position: relative;
+  transition: background-color 0.3s ease;
+  user-select: none;
+}
+
+
+.nav-link.active {
+  font-weight: bold;
+  // background: linear-gradient(to right, #000000, #1c1d1d);
+  background: linear-gradient(to right, #3c3e45, #1c1d1d);
+
+}
+
+
+.nav-link.active::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  right: 0;
+  border-top: 17px solid transparent;
+  border-bottom: 17px solid transparent;
+  border-right: 17px solid #dddddd;
+  z-index: 1;
+}
+
+.nav-link.active::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  right: -1px;
+  border-top: 17px solid transparent;
+  border-bottom: 17px solid transparent;
+  border-right: 17px solid #f4f3ef;
+  z-index: 2;
+}
+
+#spCommandBar,
+#spSiteHeader,
+#spLeftNav,
+.ommandBarWrapper,
+.sp-appBar,
+#CommentsWrapper {
+  display: none !important;
+}
+
+.CanvasZoneSectionContainer {
+  max-width: 100% !important;
+}
+
+#mainContainer,
+#mainContainer * {
+  font-size: 100% !important;
+}
+
+
+/* ===== Submenu Opens to the Right ===== */
+
+.nav-item.has-submenu {
+  position: relative;
+
+  &:hover .sub-menu {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+  }
+}
+
+.sub-menu {
+  position: absolute;
+  top: 0px;
+  /* Align with top of parent item */
+  left: 100%;
+  /* Push to the right of parent */
+  background-color: #ce0b0e;
+  min-width: 180px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-left: 2px solid #fff;
+  box-shadow: 4px 0 8px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(10px);
+  /* Slide from right */
+  transition: all 0.2s ease-in-out;
+  z-index: 999;
+}
+
+.sub-menu li {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sub-menu li a {
+  display: block;
+  padding: 12px 20px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* Highlight the active tab and arrow effect */
+.nav-item.has-submenu.active>.nav-link {
+  font-weight: bold;
+  background: linear-gradient(to right, #000000, #1c1d1d);
+}
+
+.nav-item.has-submenu.active::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  right: -1px;
+  border-top: 17px solid transparent;
+  border-bottom: 17px solid transparent;
+  border-right: 17px solid #f4f3ef;
+  z-index: 2;
+}
+
+.nav-item.has-submenu.settings:hover .sub-menu {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Special case: Settings submenu opens above instead of right */
+.nav-item.has-submenu.settings .sub-menu {
+  top: -170px;
+  height: 240px;
+  overflow-y: auto;
+  left: 100%;
+  bottom: 0;
+  // left: 100%;
+  // transform: translateY(-100%);
+}
+
+.sub-menu-title {
+  display: block;
+  padding: 10px 5px;
+  font-weight: bold;
+  background-color: hsl(0deg 0% 3.94% / 30%); // Light transparent white
+  color: #fff;
+  font-size: 13px;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  pointer-events: none; // Prevents it from being hovered like a link
+}
+
+:global {
+
+  #workbenchPageContent,
+  .p_ZwSiC_hHQBj {
+    max-width: 100% !important;
+  }
+  .sidehead-right{
+    margin-left: 10px;
+  }
+}
+
+#workbenchPageContent {
+  max-width: 100% !important;
+}
+
+#workbenchPageContent>div>div>div {
+  padding: 0 !important;
+}
+
+#mainContainer {
+  padding: 10px 20px;
+}
+
+label {
+  font-weight: 600;
+}
+
+.CanvasComponent.LCS .CanvasZone,
+.ControlZone {
+  padding: 0 !important;
+}
+
+.ControlZone {
+  margin-bottom: 0 !important;
+  margin-top: 0 !important;
+}
+
+.container-fluid {
+  padding: 0 !important;
+}
+
+.btn-warning,
+.btn-warning:hover {
+  background: #3c3e45 !important;
+  border: 1px solid #3c3e45 !important;
+}
+
+.btn {
+  width: 118px !important;
+}
+
+h5 {
+  font-weight: 700;
+}
+
+
+table {
+  border-collapse: collapse;
+  caption-side: bottom;
+  width: 100%;
+}
+
+.CanvasZone, .CanvasZoneSectionContainer, .CanvasSection{
+  padding: 0 !important;
+}
+#SuiteNavWrapper {
+ display: none !important;
+}
+
+
+//  .textareabox{
+//   height: 100px !important;
+//  }

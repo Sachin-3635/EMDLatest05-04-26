@@ -1,0 +1,19 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "sona-emd-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/sonaEmd/SonaEmdWebPart.js",
+          "manifest": "./src/webparts/sonaEmd/SonaEmdWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "SonaEmdWebPartStrings": "lib/webparts/sonaEmd/loc/{locale}.js",
+    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js"
+  }
+}

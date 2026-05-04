@@ -1,0 +1,148 @@
+.dashboard-wrapper {
+  background: #f7f7f7;
+  min-height: 100vh;
+}
+
+/* Header remains same */
+.header {
+  background: linear-gradient(90deg, #3c3e45, #2d2d2d);
+  color: #fff;
+  display: flex;
+  height: 50px;
+  justify-content: center;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 999;
+}
+
+.logo-text h2 {
+  font-size: 18px;
+  margin: 0;
+}
+
+/* Filter Section */
+.filter-section {
+  margin: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filter-left {
+  display: flex;
+  gap: 10px;
+}
+
+.filter-section .form-control {
+  width: 220px;
+}
+
+/* Create Button */
+.create-button {
+  background-color: #000;
+  color: #fff;
+  padding: 7px 14px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.create-button:hover {
+  background-color: #333;
+}
+
+/* Table Section */
+.table-section {
+  margin: 0 20px;
+  background: #fff;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.custom-table th {
+  background-color: #000;
+  color: #fff;
+  padding: 10px;
+  font-weight: 500;
+}
+
+.custom-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.custom-table tbody tr:hover {
+  background-color: #f2f2f2;
+}
+
+/* Status Badge */
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.Draft {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-badge.Submitted {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.status-badge.Approved {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-badge.Rejected {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.status-badge.Send-back {
+  background: #ffe5b4;
+  color: #8a4b00;
+}
+
+/* Pagination */
+.pagination {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.pagination button {
+  border: 1px solid #ccc;
+  background: #fff;
+  padding: 4px 8px;
+  margin: 0 3px;
+  cursor: pointer;
+}
+
+.pagination button.active {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+.filter-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;         // distance control
+}
+
+.filter-left .form-control {
+  height: 38px;       // equal height
+  font-size: 14px;
+}

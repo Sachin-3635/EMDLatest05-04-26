@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "sona-emd-client-side-solution",
+    "id": "93842993-7441-48e5-95b9-bcd2fd32ec23",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.22.2"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "SonaEMD description"
+      },
+      "longDescription": {
+        "default": "SonaEMD description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "sona-emd Feature",
+        "description": "The feature that activates elements of the sona-emd solution.",
+        "id": "b516a9e7-ae20-4491-ad8c-e495f22e6862",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/sona-emd.sppkg"
+  }
+}
