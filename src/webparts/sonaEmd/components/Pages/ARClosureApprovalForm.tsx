@@ -672,43 +672,71 @@ const ARClosureApprovalForm = (props: ISonaEmdProps) => {
       // ============================
       if (action === "APPROVE") {
 
-        // 🔥 Mark current as Approved
-        matrix[currentIndex].Status = "Approved";
+  // 🔥 Mark current as Approved
+  matrix[currentIndex].Status = "Approved";
 
-        // 🔥 FIND AP PERFORMER
-        const apPerformerIndex = matrix.findIndex(
-          (x) => x.Role?.toLowerCase().includes("performer")
-        );
+  // 🔥 FIND NEXT APPROVER (CORRECT WAY)
+  const nextIndex = matrix.findIndex(
+    (x, i) => i > currentIndex && x.Status !== "Approved"
+  );
 
-        if (apPerformerIndex !== -1) {
+  if (nextIndex !== -1) {
 
-          // 🔥 RESET ALL AFTER CURRENT
-          matrix = matrix.map((m, index) => {
-            if (index > currentIndex) {
-              return { ...m, Status: "Not Started" };
-            }
-            return m;
-          });
+    matrix[nextIndex].Status = "Pending";
 
-          // 🔥 SET AP PERFORMER AS PENDING
-          matrix[apPerformerIndex].Status = "Pending";
+    const nextApprover = matrix[nextIndex];
 
-          const apPerformer = matrix[apPerformerIndex];
+    payload.CurrentApproverId = Number(nextApprover.ApproverID);
+    payload.Status = STATUS.APPROVED_NEXT;
+    payload.PendingAt = `Pending at ${nextApprover.Approver}`;
 
-          payload.CurrentApproverId = Number(apPerformer.ApproverID);
-          payload.Status = STATUS.APPROVED_NEXT;
-          payload.PendingAt = `Pending at ${apPerformer.Approver}`;
+  } else {
 
-        } else {
+    // 🔥 FINAL STAGE
+    payload.CurrentApproverId = null;
+    payload.Status = "Completed";
+    payload.PendingAt = "Completed";
+  }
+}
+      // if (action === "APPROVE") {
 
-          // ❌ If AP Performer not found
-          console.warn("AP Performer not found in matrix");
+      //   // 🔥 Mark current as Approved
+      //   matrix[currentIndex].Status = "Approved";
 
-          payload.CurrentApproverId = null;
-          payload.Status = "Completed";
-          payload.PendingAt = "Completed";
-        }
-      }
+      //   // 🔥 FIND AP PERFORMER
+      //   const apPerformerIndex = matrix.findIndex(
+      //     (x) => x.Role?.toLowerCase().includes("performer")
+      //   );
+
+      //   if (apPerformerIndex !== -1) {
+
+      //     // 🔥 RESET ALL AFTER CURRENT
+      //     matrix = matrix.map((m, index) => {
+      //       if (index > currentIndex) {
+      //         return { ...m, Status: "Not Started" };
+      //       }
+      //       return m;
+      //     });
+
+      //     // 🔥 SET AP PERFORMER AS PENDING
+      //     matrix[apPerformerIndex].Status = "Pending";
+
+      //     const apPerformer = matrix[apPerformerIndex];
+
+      //     payload.CurrentApproverId = Number(apPerformer.ApproverID);
+      //     payload.Status = STATUS.APPROVED_NEXT;
+      //     payload.PendingAt = `Pending at ${apPerformer.Approver}`;
+
+      //   } else {
+
+      //     // ❌ If AP Performer not found
+      //     console.warn("AP Performer not found in matrix");
+
+      //     payload.CurrentApproverId = null;
+      //     payload.Status = "Completed";
+      //     payload.PendingAt = "Completed";
+      //   }
+      // }
 
       // ============================
       // 🔴 SEND BACK / REJECT

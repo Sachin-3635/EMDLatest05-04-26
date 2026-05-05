@@ -458,7 +458,7 @@ const VouchingbyAPTeamForm = (props: ISonaEmdProps) => {
       "EMDApprovalMatrix",
       "ID,Role/RoleName,Approver/ID,Approver/Title",
       "Role,Approver",
-      "",
+      "RequestType eq 'EMD Approval'",
       { column: "ID", isAscending: true },
       500,
       props

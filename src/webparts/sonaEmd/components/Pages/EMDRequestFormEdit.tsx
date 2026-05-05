@@ -74,6 +74,8 @@ const EMDRequestFormEdit = (props: ISonaEmdProps) => {
   // ---------- Misc ----------
   const [files, setFiles] = useState<File[]>([]);
   const [title, setTitle] = useState<string>(""); // EMD Request No. (Title)
+  const [approvalType, setApprovalType] = useState<any[]>([]);
+  const [approverMatrix, setApproverMatrix] = useState<any[]>([]);
 
   const [employee, setEmployee] = useState({
     EmployeeCode: "",
@@ -111,6 +113,7 @@ const EMDRequestFormEdit = (props: ISonaEmdProps) => {
     getModeOfPaymentData();
     getProductTypeData();
     getTenderTypeData();
+    loadApproverMatrix();
   }, []);
 
   // ---------- After masters ready, load the item by id ----------
@@ -317,6 +320,29 @@ const EMDRequestFormEdit = (props: ISonaEmdProps) => {
     return res.length > 0;
   };
 
+    async function loadApproverMatrix() {
+  try {
+    const sp = await spCrudOps;
+
+    const data = await sp.getData(
+      "EMDApprovalMatrix",
+      "ID,ApprovalType,Level/Level,Level/ID,Role/RoleName,Approver/ID,Approver/Title,Approver/EMail",
+      "Level,Role,Approver",
+      "RequestType eq 'EMD Approval'", 
+      { column: "Level", isAscending: true },
+      5000,
+      props
+    );
+
+    console.log("EMD Approval Matrix:", data);
+
+    setApprovalType(data);
+
+  } catch (err) {
+    console.error("Error loading EMDApprovalMatrix:", err);
+  }
+}
+
   // ---------- Submit (UPDATE existing) ----------
   const onsubmit = async () => {
     try {
@@ -343,7 +369,59 @@ const EMDRequestFormEdit = (props: ISonaEmdProps) => {
         alert("❌ Another request with same Tender No. already exists!");
         return;
       }
+      
+        const rm = {
+        Seq: 1,
+        Role: "RM",
+        ApproverID: employee.ReportingManagerId,
+        ApproverName: employee.ReportingManager,
+        Status: "Pending"
+      };
 
+      // 🔹 HOD (from EmployeeMaster)
+      const hod = {
+        Seq: 2,
+        Role: "HOD",
+        ApproverID: employee.HODId,
+        ApproverName: employee.HOD,
+        Status: "Waiting"
+      };
+
+      // 🔹 Remaining approvers from EMDApprovalMatrix
+      const otherApprovers = approvalType.map((x: any, index: number) => ({
+        Seq: index + 3,
+        Role: x.Role?.RoleName,
+        ApproverID: x.Approver?.ID,
+        ApproverName: x.Approver?.Title,
+        Status: "Waiting"
+      }));
+
+      // 🔹 Final Approval Matrix
+      const approvalMatrix = [rm, hod, ...otherApprovers];
+
+      console.log("Final ApprovalMatrix:", approvalMatrix);
+
+            const today = new Date();
+
+      const formattedDate =
+        String(today.getDate()).padStart(2, '0') + '/' +
+        String(today.getMonth() + 1).padStart(2, '0') + '/' +
+        today.getFullYear();
+
+      const currentUser =
+        props.context.pageContext.user.displayName ||
+        props.context.pageContext.user.email;
+
+      // ✅ WFHistory entry
+      const initialWFHistory = [
+        {
+          CurrentApprover: currentUser,
+          ActionTaken: "Re-Submitted",
+          Comment: "Request Created",
+          Date: formattedDate,
+          CurrentStatus: "Pending for Approval"
+        }
+      ];
       // Update the existing record
       await sp.updateData(
         "EMDDetails",
@@ -380,6 +458,10 @@ const EMDRequestFormEdit = (props: ISonaEmdProps) => {
           EMDAmount: vendor.EMDAmount,
           TenderClosingDate: vendor.TenderClosingDate || null,
           EMDPercentage: vendor.EMDPercentage,
+            ApprovalMatrix: JSON.stringify(approvalMatrix),
+          CurrentApproverId: approvalMatrix[0]?.ApproverID,
+           WFHistory: JSON.stringify(initialWFHistory),
+          CommentHistory: JSON.stringify(initialWFHistory),
         },
         props
       );
@@ -449,13 +531,44 @@ const EMDRequestFormEdit = (props: ISonaEmdProps) => {
         ) : null} */}
 
         {/* ================= APPROVAL HIERARCHY ================= */}
-        <div className="emd-hierarchy">
+        {/* <div className="emd-hierarchy">
           <div className="emd-step active-step">{employee.EmployeeName}</div>
 
           <div className="emd-step" style={{ marginLeft: "30px" }}>{employee.ReportingManager}</div>
 
           <div className="emd-step" style={{ marginLeft: "30px" }}>{employee.HOD}</div>
-        </div>
+        </div> */}
+        <div className="approvalFlow">
+
+            {/* Initiator */}
+            <div className="flowStep green">
+              {employee.EmployeeName || "Initiator"}
+            </div>
+
+            {approverMatrix.map((step, index) => {
+
+              let stepClass = "grey";
+
+              const firstPending = approverMatrix.findIndex(s => s.Status === "Pending");
+
+              // Approved
+              if (step.Status === "Approved") {
+                stepClass = "green";
+              }
+
+              // Current Pending
+              else if (index === firstPending) {
+                stepClass = "orange";
+              }
+
+              return (
+                <div key={index} className={`flowStep ${stepClass}`}>
+                  {step.ApproverName}
+                </div>
+              );
+            })}
+
+          </div>
 
         {/* ================= REQUESTOR ================= */}
         <Section title="Requestor Information">

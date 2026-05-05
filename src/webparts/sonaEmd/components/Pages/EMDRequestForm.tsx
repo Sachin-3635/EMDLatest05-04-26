@@ -363,27 +363,27 @@ const EMDRequestForm = (props: ISonaEmdProps) => {
 
   //----------------------Get Approval Matrix---------------------------------
   async function loadApproverMatrix() {
-    try {
-      const sp = await spCrudOps;
+  try {
+    const sp = await spCrudOps;
 
-      const data = await sp.getData(
-        "EMDApprovalMatrix",
-        "ID,ApprovalType,Level/Level,Level/ID,Role/RoleName,Approver/ID,Approver/Title,Approver/EMail",
-        "Level,Role,Approver",
-        "",
-        { column: "Level", isAscending: true },
-        5000,
-        props
-      );
+    const data = await sp.getData(
+      "EMDApprovalMatrix",
+      "ID,ApprovalType,Level/Level,Level/ID,Role/RoleName,Approver/ID,Approver/Title,Approver/EMail",
+      "Level,Role,Approver",
+      "RequestType eq 'EMD Approval'", 
+      { column: "Level", isAscending: true },
+      5000,
+      props
+    );
 
-      console.log("EMD Approval Matrix:", data);
+    console.log("EMD Approval Matrix:", data);
 
-      setApprovalType(data);
+    setApprovalType(data);
 
-    } catch (err) {
-      console.error("Error loading EMDApprovalMatrix:", err);
-    }
+  } catch (err) {
+    console.error("Error loading EMDApprovalMatrix:", err);
   }
+}
 
   // ---------- Submit ----------
   const onsubmit = async () => {

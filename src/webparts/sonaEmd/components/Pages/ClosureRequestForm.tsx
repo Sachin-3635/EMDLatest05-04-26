@@ -389,46 +389,116 @@ const ClosureRequestForm = (props: ISonaEmdProps) => {
             setClosureAmount(details.Amount != null ? String(details.Amount) : "");
             setClosureComments(details.ARComment || "");
 
-            // 🔥 LOAD APPROVAL MATRIX
             try {
                 let matrix: any[] = [];
 
-                if (details.ApprovalMatrix) {
-                    matrix =
+                // =========================
+                // 🔹 LOAD OLD MATRIX
+                // =========================
+                try {
+                    const parsed =
                         typeof details.ApprovalMatrix === "string"
                             ? JSON.parse(details.ApprovalMatrix)
                             : details.ApprovalMatrix;
+
+                    matrix = Array.isArray(parsed) ? parsed : [];
+                } catch {
+                    matrix = [];
                 }
 
-                // ✅ sort by sequence
-                matrix.sort((a: any, b: any) => a.Seq - b.Seq);
+                console.log("🔥 Old Matrix:", matrix);
 
-                console.log("🔥 Approval Matrix:", matrix); // debug
+                const spx = await spCrudOps;
+
+                // =========================
+                // 🔹 FETCH CLOSURE APPROVERS
+                // =========================
+                const closureApprovers = await spx.getData(
+                    "EMDApprovalMatrix",
+                    "ID,Role/RoleName,Approver/ID,Approver/Title",
+                    "Role,Approver",
+                    "RequestType eq 'EMD Closure Approval'",
+                    { column: "ID", isAscending: true },
+                    1000,
+                    props
+                );
+
+                console.log("🔥 Closure Approvers:", closureApprovers);
+
+                // 🚨 DEBUG CHECK
+                if (!closureApprovers || closureApprovers.length === 0) {
+                    console.warn("⚠ No Closure Approvers Found");
+                }
+
+                // =========================
+                // 🔹 ADD NEW APPROVERS (NO DUPLICATE ISSUE)
+                // =========================
+                let maxSeq =
+                    matrix.length > 0
+                        ? Math.max(...matrix.map((x: any) => x.Seq || 0))
+                        : 0;
+
+                closureApprovers.forEach((x: any, index: number) => {
+
+                    // 🔥 USE ApproverID instead of Role (FIX)
+                    const exists = matrix.some(
+                        (m: any) => m.ApproverID === x.Approver?.ID
+                    );
+
+                    if (!exists) {
+                        maxSeq += 1; // 🔥 IMPORTANT FIX
+
+                        matrix.push({
+                            Seq: maxSeq,
+                            Role: x.Role?.RoleName,
+                            Approver: x.Approver?.Title,
+                            ApproverID: x.Approver?.ID,
+                            Status: "Not Started"
+                        });
+                    }
+                });
+
+                // =========================
+                // 🔹 NORMALIZE
+                // =========================
+                matrix = matrix.map((x: any, index: number) => ({
+                    Seq: x.Seq ?? index + 1,
+                    Role: x.Role || "",
+                    Approver: x.Approver || x.ApproverName || "",
+                    ApproverID: x.ApproverID || x.Id || null,
+                    Status: x.Status || "Not Started"
+                }));
+
+                // =========================
+                // 🔹 SORT
+                // =========================
+                matrix.sort((a: any, b: any) => (a.Seq || 0) - (b.Seq || 0));
+
+                console.log("🔥 FINAL MATRIX:", matrix);
 
                 setApprovalMatrix(matrix);
-                // 🔥 LOAD WF HISTORY
-                try {
-                    let history: any[] = [];
-
-                    if (details.WFHistory) {
-                        history =
-                            typeof details.WFHistory === "string"
-                                ? JSON.parse(details.WFHistory)
-                                : details.WFHistory;
-                    }
-
-                    setWfHistory(history || []);
-
-                    console.log("🔥 WFHistory:", history);
-
-                } catch (e) {
-                    console.error("WFHistory parse error", e);
-                    setWfHistory([]);
-                }
 
             } catch (e) {
-                console.error("Error parsing ApprovalMatrix", e);
+                console.error("Matrix load error", e);
                 setApprovalMatrix([]);
+            }
+            try {
+                let history: any[] = [];
+
+                if (details.WFHistory) {
+                    history =
+                        typeof details.WFHistory === "string"
+                            ? JSON.parse(details.WFHistory)
+                            : details.WFHistory;
+                }
+
+                setWfHistory(history || []);
+
+                console.log("🔥 WFHistory:", history);
+
+            } catch (e) {
+                console.error("WFHistory parse error", e);
+                setWfHistory([]);
             }
 
             // Attachments
@@ -507,228 +577,225 @@ const ClosureRequestForm = (props: ISonaEmdProps) => {
     //     }
     // };
 
-    const onCloseSubmit = async () => {
-        if (isSaving) return;
+   const onCloseSubmit = async () => {
+    if (isSaving) return;
+
+    try {
+        setIsSaving(true);
+
+        if (!itemId || Number.isNaN(itemId)) return alert("Invalid item id.");
+
+        if (!dateOfReceipt) { alert("Date of Receipt is required."); return; }
+        if (!bankAccount.trim()) { alert("Bank Account is required."); return; }
+        if (!closureAmount.trim()) { alert("Amount is required."); return; }
+        if (!closureComments.trim()) { alert("Comments are required."); return; }
+
+        const spx = await spCrudOps;
+
+        // =========================
+        // 🔥 1️⃣ GET CURRENT ITEM
+        // =========================
+        const items = await spx.getData(
+            "EMDDetails",
+            "Id,ApprovalMatrix,WFHistory",
+            "",
+            `Id eq ${itemId}`,
+            { column: "Id", isAscending: false },
+            1,
+            props
+        );
+
+        if (!items || items.length === 0) {
+            alert("Item not found");
+            return;
+        }
+
+        const item = items[0];
+
+        // =========================
+        // 🔥 2️⃣ PARSE OLD MATRIX
+        // =========================
+        let oldMatrix: any[] = [];
 
         try {
-            setIsSaving(true);
+            oldMatrix =
+                typeof item.ApprovalMatrix === "string"
+                    ? JSON.parse(item.ApprovalMatrix)
+                    : item.ApprovalMatrix || [];
+        } catch {
+            oldMatrix = [];
+        }
 
-            if (!itemId || Number.isNaN(itemId)) return alert("Invalid item id.");
+        console.log("🔥 Old Matrix:", oldMatrix);
 
-            if (!dateOfReceipt) { alert("Date of Receipt is required."); return; }
-            if (!bankAccount.trim()) { alert("Bank Account is required."); return; }
-            if (!closureAmount.trim()) { alert("Amount is required."); return; }
-            if (!closureComments.trim()) { alert("Comments are required."); return; }
+        // =========================
+        // 🔥 3️⃣ GET CLOSURE APPROVERS
+        // =========================
+        const closureApprovers = await spx.getData(
+            "EMDApprovalMatrix",
+            "ID,Role/RoleName,Approver/ID,Approver/Title",
+            "Role,Approver",
+            "RequestType eq 'EMD Closure Approval'",
+            { column: "ID", isAscending: true },
+            1000,
+            props
+        );
 
-            const spx = await spCrudOps;
+        console.log("🔥 Closure Approvers:", closureApprovers);
 
-            // 🔥 1️⃣ GET CURRENT ITEM
-            const items = await spx.getData(
-                "EMDDetails",
-                "Id,ApprovalMatrix,WFHistory",
-                "",
-                `Id eq ${itemId}`,
-                { column: "Id", isAscending: false },
-                1,
-                props
+        // =========================
+        // 🔥 4️⃣ BUILD MATRIX
+        // =========================
+        let matrix = [...oldMatrix];
+
+        let maxSeq =
+            matrix.length > 0
+                ? Math.max(...matrix.map((x: any) => x.Seq || 0))
+                : 0;
+
+        closureApprovers.forEach((x: any) => {
+
+            // ✅ FIX: check by ApproverID (NOT Role)
+            const exists = matrix.some(
+                (m: any) => m.ApproverID === x.Approver?.ID
             );
 
-            if (!items || items.length === 0) {
-                alert("Item not found");
-                return;
-            }
+            if (!exists) {
+                maxSeq += 1;
 
-            const item = items[0];
-
-            // 🔥 2️⃣ PARSE OLD MATRIX
-            let oldMatrix: any[] = [];
-
-            try {
-                oldMatrix =
-                    typeof item.ApprovalMatrix === "string"
-                        ? JSON.parse(item.ApprovalMatrix)
-                        : item.ApprovalMatrix || [];
-            } catch {
-                oldMatrix = [];
-            }
-
-            // 🔥 3️⃣ GET MASTER MATRIX (EMDApprovalMatrix)
-            const master = await spx.getData(
-                "EMDApprovalMatrix",
-                "ID,Role/RoleName,Approver/ID,Approver/Title",
-                "Role,Approver",
-                "",
-                { column: "ID", isAscending: true },
-                1000,
-                props
-            );
-
-            const normalizeRole = (role: any) => String(role || "").trim().toLowerCase();
-
-            // 🔥 4️⃣ BUILD UPDATED MATRIX
-            let matrix = master.map((x: any, index: number) => {
-
-                const oldItem = oldMatrix.find(
-                    (o) => normalizeRole(o.Role) === normalizeRole(x.Role?.RoleName)
-                );
-
-                const newApproverID = x.Approver?.ID;
-
-                // ✅ IF APPROVER CHANGED → RESET
-                if (!oldItem || String(oldItem.ApproverID) !== String(newApproverID)) {
-                    return {
-                        Seq: index + 1,
-                        Role: x.Role?.RoleName,
-                        ApproverID: newApproverID,
-                        Approver: x.Approver?.Title,
-                        Status: "Not Started"
-                    };
-                }
-
-                // ✅ KEEP OLD STATUS
-                return {
-                    ...oldItem,
-                    ApproverID: newApproverID,
-                    Approver: x.Approver?.Title
-                };
-            });
-
-            // 🔥 5️⃣ KEEP RM/HOD FROM OLD MATRIX
-            oldMatrix.forEach(oldItem => {
-                const oldRole = normalizeRole(oldItem.Role);
-                if (!matrix.find((x: { Role: any; }) => normalizeRole(x.Role) === oldRole)) {
-                    matrix.push(oldItem);
-                }
-            });
-
-            // 🔥 IMPORTANT: RESET REJECTED / SENT BACK
-            matrix = matrix.map((item: any) => {
-                if (item.Status === "Rejected" || item.Status === "Sent Back") {
-                    return { ...item, Status: "Not Started" };
-                }
-                return item;
-            });
-
-            // 🔥 6️⃣ REORDER RM/HOD FIRST AND REASSIGN SEQ
-            const rmItem = matrix.find((x: any) => normalizeRole(x.Role) === "rm");
-            const hodItem = matrix.find((x: any) => normalizeRole(x.Role) === "hod");
-
-            const remaining = matrix.filter((x: any) =>
-                normalizeRole(x.Role) !== "rm" && normalizeRole(x.Role) !== "hod"
-            );
-
-            matrix = [
-                ...(rmItem ? [rmItem] : []),
-                ...(hodItem ? [hodItem] : []),
-                ...remaining
-            ].map((item: any, index: number) => ({
-                ...item,
-                Seq: index + 1
-            }));
-
-            // 🔥 7️⃣ PRESERVE EXISTING PENDING/REJECTED STATUS IF PRESENT
-            // const hasExistingPendingOrRejected = matrix.some(
-            //     (item: any) => item.Status === "Pending" || item.Status === "Rejected" || item.Status === "Sent Back"
-            // );
-
-
-            const hasExistingPendingOrRejected = matrix.some(
-                (item: any) => item.Status === "Pending"
-            );
-
-            if (!hasExistingPendingOrRejected) {
-                let foundPending = false;
-
-                matrix = matrix.map((item: { Status: string; }) => {
-                    if (!foundPending && item.Status !== "Approved") {
-                        foundPending = true;
-                        return { ...item, Status: "Pending" };
-                    }
-
-                    if (item.Status !== "Approved") {
-                        return { ...item, Status: "Not Started" };
-                    }
-
-                    return item;
+                matrix.push({
+                    Seq: maxSeq,
+                    Role: x.Role?.RoleName,
+                    ApproverID: x.Approver?.ID,
+                    Approver: x.Approver?.Title,
+                    Status: "Not Started"
                 });
             }
+        });
 
-            // 🔥 8️⃣ CURRENT APPROVER
-            const current = matrix.find((x: { Status: string; }) => x.Status === "Pending");
-
-            // ===============================
-            // 🔥 WF HISTORY UPDATE
-            // ===============================
-            let prevHistory: any[] = [];
-
-            try {
-                prevHistory =
-                    typeof item.WFHistory === "string"
-                        ? JSON.parse(item.WFHistory)
-                        : item.WFHistory || [];
-            } catch {
-                prevHistory = [];
+        // =========================
+        // 🔥 5️⃣ RESET REJECTED / SENT BACK
+        // =========================
+        matrix = matrix.map((item: any) => {
+            if (item.Status === "Rejected" || item.Status === "Sent Back") {
+                return { ...item, Status: "Not Started" };
             }
+            return item;
+        });
 
-            // ✅ Current user
-            const currentUser =
-                props.context?.pageContext?.user?.displayName || "AR Team";
+        // =========================
+        // 🔥 6️⃣ REORDER RM & HOD FIRST
+        // =========================
+        const normalizeRole = (r: any) =>
+            String(r || "").trim().toLowerCase();
 
-            const today = new Date();
-            const formattedDate =
-                String(today.getDate()).padStart(2, '0') + '/' +
-                String(today.getMonth() + 1).padStart(2, '0') + '/' +
-                today.getFullYear();
+        const rmItem = matrix.find((x: any) => normalizeRole(x.Role) === "rm");
+        const hodItem = matrix.find((x: any) => normalizeRole(x.Role) === "hod");
 
-            // ✅ New entry
-            const newEntry = {
-                CurrentApprover: currentUser,
-                ActionTaken: "Closure Submitted",
-                Comment: closureComments,
-                Date: formattedDate
-            };
+        const remaining = matrix.filter((x: any) =>
+            normalizeRole(x.Role) !== "rm" && normalizeRole(x.Role) !== "hod"
+        );
 
-            // ✅ PUSH
-            prevHistory.push(newEntry);
+        matrix = [
+            ...(rmItem ? [rmItem] : []),
+            ...(hodItem ? [hodItem] : []),
+            ...remaining
+        ].map((item: any, index: number) => ({
+            ...item,
+            Seq: index + 1
+        }));
 
-            // ✅ SAVE
-            const wfHistoryPayload = JSON.stringify(prevHistory);
+        // =========================
+        // 🔥 7️⃣ FORCE FIRST PENDING (FIXED)
+        // =========================
+        let foundPending = false;
 
-            console.log("🔥 FINAL WFHistory:", prevHistory);
+        matrix = matrix.map((item: any) => {
+            if (!foundPending && item.Status !== "Approved") {
+                foundPending = true;
+                return { ...item, Status: "Pending" };
+            }
+            if (item.Status !== "Approved") {
+                return { ...item, Status: "Not Started" };
+            }
+            return item;
+        });
 
-            // 🔥 9️⃣ UPDATE SHAREPOINT
-            await spx.updateData(
-                "EMDDetails",
-                itemId,
-                {
-                    DateofReceipt: dateOfReceipt,
-                    BankAccount: Number(bankAccount),
-                    Amount: Number(closureAmount),
-                    ARComment: closureComments,
-                    Status: "Pending for Closure Approval",
+        // =========================
+        // 🔥 8️⃣ CURRENT APPROVER
+        // =========================
+        const finalCurrent =
+            matrix.find((x: any) => x.Status === "Pending") ||
+            matrix.find((x: any) => x.Status === "Not Started") ||
+            null;
 
-                    // ✅ IMPORTANT
-                    ApprovalMatrix: JSON.stringify(matrix),
-                    CurrentApproverId: current?.ApproverID || null,
-                    PendingAt: current ? `Pending at ${current.Approver}` : "Completed",
-                    WFHistory: wfHistoryPayload
+        console.log("👉 Current Approver:", finalCurrent);
 
-                },
-                props
-            );
+        // =========================
+        // 🔥 9️⃣ WORKFLOW HISTORY
+        // =========================
+        let prevHistory: any[] = [];
 
-            alert("✅ Submitted for Closure Approval");
-
-            // history.push("/ClosureApprovalARDashboard");
-            history.goBack();
-
-        } catch (e) {
-            console.error("[Closure] Submit error", e);
-            alert("Something went wrong.");
-        } finally {
-            setIsSaving(false);
+        try {
+            prevHistory =
+                typeof item.WFHistory === "string"
+                    ? JSON.parse(item.WFHistory)
+                    : item.WFHistory || [];
+        } catch {
+            prevHistory = [];
         }
-    };
+
+        const currentUser =
+            props.context?.pageContext?.user?.displayName || "AR Team";
+
+        const today = new Date();
+        const formattedDate =
+            String(today.getDate()).padStart(2, '0') + '/' +
+            String(today.getMonth() + 1).padStart(2, '0') + '/' +
+            today.getFullYear();
+
+        prevHistory.push({
+            CurrentApprover: currentUser,
+            ActionTaken: "Closure Submitted",
+            Comment: closureComments,
+            Date: formattedDate
+        });
+
+        // =========================
+        // 🔥 🔟 UPDATE SHAREPOINT
+        // =========================
+        await spx.updateData(
+            "EMDDetails",
+            itemId,
+            {
+                DateofReceipt: dateOfReceipt,
+                BankAccount: Number(bankAccount),
+                Amount: Number(closureAmount),
+                ARComment: closureComments,
+
+                Status: "Pending for Closure Approval",
+
+                ApprovalMatrix: JSON.stringify(matrix),
+                CurrentApproverId: finalCurrent?.ApproverID || null,
+                PendingAt: finalCurrent
+                    ? `Pending at ${finalCurrent.Approver}`
+                    : "Completed",
+
+                WFHistory: JSON.stringify(prevHistory)
+            },
+            props
+        );
+
+        alert("✅ Submitted for Closure Approval");
+        history.goBack();
+
+    } catch (e) {
+        console.error("[Closure] Submit error", e);
+        alert("Something went wrong.");
+    } finally {
+        setIsSaving(false);
+    }
+};
     return (
         <div className="forex-wrapper">
             {/* ================= HEADER ================= */}

@@ -396,7 +396,7 @@ const UTRDetailEntry = (props: ISonaEmdProps) => {
       "EMDApprovalMatrix",
       "ID,Role/RoleName,Approver/ID,Approver/Title",
       "Role,Approver",
-      "",
+      "RequestType eq 'EMD Approval'",
       { column: "ID", isAscending: true },
       1000,
       props
@@ -504,7 +504,7 @@ const UTRDetailEntry = (props: ISonaEmdProps) => {
         "EMDApprovalMatrix",
         "ID,Role/RoleName,Approver/ID,Approver/Title",
         "Role,Approver",
-        "",
+        "RequestType eq 'EMD Approval'",
         { column: "ID", isAscending: true },
         1000,
         props
@@ -650,8 +650,8 @@ const UTRDetailEntry = (props: ISonaEmdProps) => {
       } else {
 
         payload.CurrentApproverId = null;
-        payload.Status = "Completed";
-        payload.PendingAt = "Completed";
+        payload.Status = "EMD Paid";
+        payload.PendingAt = "EMD Paid";
 
         console.log("✅ FINAL APPROVAL");
       }

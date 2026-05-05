@@ -610,12 +610,17 @@ const EMDClosureRequestForm = (props: ISonaEmdProps) => {
 
       const currentUser =
         props.context?.pageContext?.user?.displayName || "Closure Team";
+const today = new Date();
 
+      const formattedDate =
+        String(today.getDate()).padStart(2, '0') + '/' +
+        String(today.getMonth() + 1).padStart(2, '0') + '/' +
+        today.getFullYear();
       const newEntry = {
         CurrentApprover: currentUser,
         ActionTaken: "EMD Closed",
         Comment: closureComments || "Closure completed",
-        Date: new Date().toISOString()
+        Date: formattedDate
       };
 
       prevHistory.push(newEntry);
@@ -711,7 +716,7 @@ const EMDClosureRequestForm = (props: ISonaEmdProps) => {
 
               // 🟠 Current Pending
               else if (index === firstPending) {
-                stepClass = "green";
+                stepClass = "orange";
               }
 
               return (
