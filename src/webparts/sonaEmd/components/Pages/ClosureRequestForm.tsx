@@ -5,6 +5,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import SPCRUDOPS from "../../service/BAL/spcrud";
 import { sp } from "@pnp/sp";
 
+import logo from "../../assets/sona-comstarlogo.png";
 /** ========== UI Helpers ========== */
 const Section = ({ title, children }: any) => (
     <div className="form-section">
@@ -577,661 +578,597 @@ const ClosureRequestForm = (props: ISonaEmdProps) => {
     //     }
     // };
 
-   const onCloseSubmit = async () => {
-    if (isSaving) return;
-
-    try {
-        setIsSaving(true);
-
-        if (!itemId || Number.isNaN(itemId)) return alert("Invalid item id.");
-
-        if (!dateOfReceipt) { alert("Date of Receipt is required."); return; }
-        if (!bankAccount.trim()) { alert("Bank Account is required."); return; }
-        if (!closureAmount.trim()) { alert("Amount is required."); return; }
-        if (!closureComments.trim()) { alert("Comments are required."); return; }
-
-        const spx = await spCrudOps;
-
-        // =========================
-        // 🔥 1️⃣ GET CURRENT ITEM
-        // =========================
-        const items = await spx.getData(
-            "EMDDetails",
-            "Id,ApprovalMatrix,WFHistory",
-            "",
-            `Id eq ${itemId}`,
-            { column: "Id", isAscending: false },
-            1,
-            props
-        );
-
-        if (!items || items.length === 0) {
-            alert("Item not found");
-            return;
-        }
-
-        const item = items[0];
-
-        // =========================
-        // 🔥 2️⃣ PARSE OLD MATRIX
-        // =========================
-        let oldMatrix: any[] = [];
+    const onCloseSubmit = async () => {
+        if (isSaving) return;
 
         try {
-            oldMatrix =
-                typeof item.ApprovalMatrix === "string"
-                    ? JSON.parse(item.ApprovalMatrix)
-                    : item.ApprovalMatrix || [];
-        } catch {
-            oldMatrix = [];
-        }
+            setIsSaving(true);
 
-        console.log("🔥 Old Matrix:", oldMatrix);
+            if (!itemId || Number.isNaN(itemId)) return alert("Invalid item id.");
 
-        // =========================
-        // 🔥 3️⃣ GET CLOSURE APPROVERS
-        // =========================
-        const closureApprovers = await spx.getData(
-            "EMDApprovalMatrix",
-            "ID,Role/RoleName,Approver/ID,Approver/Title",
-            "Role,Approver",
-            "RequestType eq 'EMD Closure Approval'",
-            { column: "ID", isAscending: true },
-            1000,
-            props
-        );
+            if (!dateOfReceipt) { alert("Date of Receipt is required."); return; }
+            if (!bankAccount.trim()) { alert("Bank Account is required."); return; }
+            if (!closureAmount.trim()) { alert("Amount is required."); return; }
+            if (!closureComments.trim()) { alert("Comments are required."); return; }
 
-        console.log("🔥 Closure Approvers:", closureApprovers);
+            const spx = await spCrudOps;
 
-        // =========================
-        // 🔥 4️⃣ BUILD MATRIX
-        // =========================
-        let matrix = [...oldMatrix];
-
-        let maxSeq =
-            matrix.length > 0
-                ? Math.max(...matrix.map((x: any) => x.Seq || 0))
-                : 0;
-
-        closureApprovers.forEach((x: any) => {
-
-            // ✅ FIX: check by ApproverID (NOT Role)
-            const exists = matrix.some(
-                (m: any) => m.ApproverID === x.Approver?.ID
+            // =========================
+            // 🔥 1️⃣ GET CURRENT ITEM
+            // =========================
+            const items = await spx.getData(
+                "EMDDetails",
+                "Id,ApprovalMatrix,WFHistory",
+                "",
+                `Id eq ${itemId}`,
+                { column: "Id", isAscending: false },
+                1,
+                props
             );
 
-            if (!exists) {
-                maxSeq += 1;
-
-                matrix.push({
-                    Seq: maxSeq,
-                    Role: x.Role?.RoleName,
-                    ApproverID: x.Approver?.ID,
-                    Approver: x.Approver?.Title,
-                    Status: "Not Started"
-                });
+            if (!items || items.length === 0) {
+                alert("Item not found");
+                return;
             }
-        });
 
-        // =========================
-        // 🔥 5️⃣ RESET REJECTED / SENT BACK
-        // =========================
-        matrix = matrix.map((item: any) => {
-            if (item.Status === "Rejected" || item.Status === "Sent Back") {
-                return { ...item, Status: "Not Started" };
+            const item = items[0];
+
+            // =========================
+            // 🔥 2️⃣ PARSE OLD MATRIX
+            // =========================
+            let oldMatrix: any[] = [];
+
+            try {
+                oldMatrix =
+                    typeof item.ApprovalMatrix === "string"
+                        ? JSON.parse(item.ApprovalMatrix)
+                        : item.ApprovalMatrix || [];
+            } catch {
+                oldMatrix = [];
             }
-            return item;
-        });
 
-        // =========================
-        // 🔥 6️⃣ REORDER RM & HOD FIRST
-        // =========================
-        const normalizeRole = (r: any) =>
-            String(r || "").trim().toLowerCase();
+            console.log("🔥 Old Matrix:", oldMatrix);
 
-        const rmItem = matrix.find((x: any) => normalizeRole(x.Role) === "rm");
-        const hodItem = matrix.find((x: any) => normalizeRole(x.Role) === "hod");
+            // =========================
+            // 🔥 3️⃣ GET CLOSURE APPROVERS
+            // =========================
+            const closureApprovers = await spx.getData(
+                "EMDApprovalMatrix",
+                "ID,Role/RoleName,Approver/ID,Approver/Title",
+                "Role,Approver",
+                "RequestType eq 'EMD Closure Approval'",
+                { column: "ID", isAscending: true },
+                1000,
+                props
+            );
 
-        const remaining = matrix.filter((x: any) =>
-            normalizeRole(x.Role) !== "rm" && normalizeRole(x.Role) !== "hod"
-        );
+            console.log("🔥 Closure Approvers:", closureApprovers);
 
-        matrix = [
-            ...(rmItem ? [rmItem] : []),
-            ...(hodItem ? [hodItem] : []),
-            ...remaining
-        ].map((item: any, index: number) => ({
-            ...item,
-            Seq: index + 1
-        }));
+            // =========================
+            // 🔥 4️⃣ BUILD MATRIX
+            // =========================
+            let matrix = [...oldMatrix];
 
-        // =========================
-        // 🔥 7️⃣ FORCE FIRST PENDING (FIXED)
-        // =========================
-        let foundPending = false;
+            let maxSeq =
+                matrix.length > 0
+                    ? Math.max(...matrix.map((x: any) => x.Seq || 0))
+                    : 0;
 
-        matrix = matrix.map((item: any) => {
-            if (!foundPending && item.Status !== "Approved") {
-                foundPending = true;
-                return { ...item, Status: "Pending" };
+            closureApprovers.forEach((x: any) => {
+
+                // ✅ FIX: check by ApproverID (NOT Role)
+                const exists = matrix.some(
+                    (m: any) => m.ApproverID === x.Approver?.ID
+                );
+
+                if (!exists) {
+                    maxSeq += 1;
+
+                    matrix.push({
+                        Seq: maxSeq,
+                        Role: x.Role?.RoleName,
+                        ApproverID: x.Approver?.ID,
+                        Approver: x.Approver?.Title,
+                        Status: "Not Started"
+                    });
+                }
+            });
+
+            // =========================
+            // 🔥 5️⃣ RESET REJECTED / SENT BACK
+            // =========================
+            matrix = matrix.map((item: any) => {
+                if (item.Status === "Rejected" || item.Status === "Sent Back") {
+                    return { ...item, Status: "Not Started" };
+                }
+                return item;
+            });
+
+            // =========================
+            // 🔥 6️⃣ REORDER RM & HOD FIRST
+            // =========================
+            const normalizeRole = (r: any) =>
+                String(r || "").trim().toLowerCase();
+
+            const rmItem = matrix.find((x: any) => normalizeRole(x.Role) === "rm");
+            const hodItem = matrix.find((x: any) => normalizeRole(x.Role) === "hod");
+
+            const remaining = matrix.filter((x: any) =>
+                normalizeRole(x.Role) !== "rm" && normalizeRole(x.Role) !== "hod"
+            );
+
+            matrix = [
+                ...(rmItem ? [rmItem] : []),
+                ...(hodItem ? [hodItem] : []),
+                ...remaining
+            ].map((item: any, index: number) => ({
+                ...item,
+                Seq: index + 1
+            }));
+
+            // =========================
+            // 🔥 7️⃣ FORCE FIRST PENDING (FIXED)
+            // =========================
+            let foundPending = false;
+
+            matrix = matrix.map((item: any) => {
+                if (!foundPending && item.Status !== "Approved") {
+                    foundPending = true;
+                    return { ...item, Status: "Pending" };
+                }
+                if (item.Status !== "Approved") {
+                    return { ...item, Status: "Not Started" };
+                }
+                return item;
+            });
+
+            // =========================
+            // 🔥 8️⃣ CURRENT APPROVER
+            // =========================
+            const finalCurrent =
+                matrix.find((x: any) => x.Status === "Pending") ||
+                matrix.find((x: any) => x.Status === "Not Started") ||
+                null;
+
+            console.log("👉 Current Approver:", finalCurrent);
+
+            // =========================
+            // 🔥 9️⃣ WORKFLOW HISTORY
+            // =========================
+            let prevHistory: any[] = [];
+
+            try {
+                prevHistory =
+                    typeof item.WFHistory === "string"
+                        ? JSON.parse(item.WFHistory)
+                        : item.WFHistory || [];
+            } catch {
+                prevHistory = [];
             }
-            if (item.Status !== "Approved") {
-                return { ...item, Status: "Not Started" };
-            }
-            return item;
-        });
 
-        // =========================
-        // 🔥 8️⃣ CURRENT APPROVER
-        // =========================
-        const finalCurrent =
-            matrix.find((x: any) => x.Status === "Pending") ||
-            matrix.find((x: any) => x.Status === "Not Started") ||
-            null;
+            const currentUser =
+                props.context?.pageContext?.user?.displayName || "AR Team";
 
-        console.log("👉 Current Approver:", finalCurrent);
+            const today = new Date();
+            const formattedDate =
+                String(today.getDate()).padStart(2, '0') + '/' +
+                String(today.getMonth() + 1).padStart(2, '0') + '/' +
+                today.getFullYear();
 
-        // =========================
-        // 🔥 9️⃣ WORKFLOW HISTORY
-        // =========================
-        let prevHistory: any[] = [];
+            prevHistory.push({
+                CurrentApprover: currentUser,
+                ActionTaken: "Closure Submitted",
+                Comment: closureComments,
+                Date: formattedDate
+            });
 
-        try {
-            prevHistory =
-                typeof item.WFHistory === "string"
-                    ? JSON.parse(item.WFHistory)
-                    : item.WFHistory || [];
-        } catch {
-            prevHistory = [];
+            // =========================
+            // 🔥 🔟 UPDATE SHAREPOINT
+            // =========================
+            await spx.updateData(
+                "EMDDetails",
+                itemId,
+                {
+                    DateofReceipt: dateOfReceipt,
+                    BankAccount: Number(bankAccount),
+                    Amount: Number(closureAmount),
+                    ARComment: closureComments,
+
+                    Status: "Pending for Closure Approval",
+
+                    ApprovalMatrix: JSON.stringify(matrix),
+                    CurrentApproverId: finalCurrent?.ApproverID || null,
+                    PendingAt: finalCurrent
+                        ? `Pending at ${finalCurrent.Approver}`
+                        : "Completed",
+
+                    WFHistory: JSON.stringify(prevHistory)
+                },
+                props
+            );
+
+            alert("✅ Submitted for Closure Approval");
+            history.goBack();
+
+        } catch (e) {
+            console.error("[Closure] Submit error", e);
+            alert("Something went wrong.");
+        } finally {
+            setIsSaving(false);
         }
-
-        const currentUser =
-            props.context?.pageContext?.user?.displayName || "AR Team";
-
-        const today = new Date();
-        const formattedDate =
-            String(today.getDate()).padStart(2, '0') + '/' +
-            String(today.getMonth() + 1).padStart(2, '0') + '/' +
-            today.getFullYear();
-
-        prevHistory.push({
-            CurrentApprover: currentUser,
-            ActionTaken: "Closure Submitted",
-            Comment: closureComments,
-            Date: formattedDate
-        });
-
-        // =========================
-        // 🔥 🔟 UPDATE SHAREPOINT
-        // =========================
-        await spx.updateData(
-            "EMDDetails",
-            itemId,
-            {
-                DateofReceipt: dateOfReceipt,
-                BankAccount: Number(bankAccount),
-                Amount: Number(closureAmount),
-                ARComment: closureComments,
-
-                Status: "Pending for Closure Approval",
-
-                ApprovalMatrix: JSON.stringify(matrix),
-                CurrentApproverId: finalCurrent?.ApproverID || null,
-                PendingAt: finalCurrent
-                    ? `Pending at ${finalCurrent.Approver}`
-                    : "Completed",
-
-                WFHistory: JSON.stringify(prevHistory)
-            },
-            props
-        );
-
-        alert("✅ Submitted for Closure Approval");
-        history.goBack();
-
-    } catch (e) {
-        console.error("[Closure] Submit error", e);
-        alert("Something went wrong.");
-    } finally {
-        setIsSaving(false);
-    }
-};
+    };
     return (
-        <div className="forex-wrapper">
-            {/* ================= HEADER ================= */}
-            <div className="forex-header">
-                <h2>Closure Request Form </h2>
-                {title ? <div style={{ marginTop: 4, color: "#666" }}>Ref: {title}</div> : null}
-            </div>
+        <div className='MainUplodForm' style={{ margin: "5px 0px" }}>
+            <div className='row'>
+                <div className='col-md-12'>
+                    <div className='Main-Boxpoup'>
+                        {/* 🔹 Header */}
+                        <div className="bordered">
+                            <img src={logo} />
+                            <h1>Closure Request Form  </h1>
+                            {title ? <div style={{ marginTop: 4, color: "#666" }}>Ref: {title}</div> : null}
+                        </div>
+                        <div className="headerApproval">
+                            <div className="approvalFlow">
 
-            <div className="forex-card">
+                                {/* Initiator */}
+                                <div className="flowStep green">Initiator</div>
 
-                {/* ================= APPROVAL HIERARCHY ================= */}
-                {/* <div className="emd-hierarchy">
-                    <div className="emd-step active-step">{employee.EmployeeName}</div>
+                                {approvalMatrix.map((step, index) => {
 
-                    <div className="emd-step" style={{ marginLeft: "30px" }}>{employee.ReportingManager}</div>
+                                    let stepClass = "grey";
 
-                    <div className="emd-step" style={{ marginLeft: "30px" }}>{employee.HOD}</div>
-                </div> */}
-                <div className="headerApproval">
-                    <div className="approvalFlow">
+                                    const firstPending = approvalMatrix.findIndex(s => s.Status === "Pending");
+                                    const isLastStep = index === approvalMatrix.length - 1;
 
-                        {/* Initiator */}
-                        <div className="flowStep green">Initiator</div>
+                                    // 🔴 Rejected
+                                    if (step.Status === "Rejected") {
+                                        stepClass = "red";
+                                    }
 
-                        {approvalMatrix.map((step, index) => {
+                                    // 🟢 Approved
+                                    else if (step.Status === "Approved") {
+                                        stepClass = "green";
+                                    }
 
-                            let stepClass = "grey";
+                                    // 🟢 Last Accepted
+                                    else if (isLastStep && step.Status === "Accepted") {
+                                        stepClass = "green";
+                                    }
 
-                            const firstPending = approvalMatrix.findIndex(s => s.Status === "Pending");
-                            const isLastStep = index === approvalMatrix.length - 1;
+                                    // 🟠 Current Pending
+                                    else if (index === firstPending) {
+                                        stepClass = "orange";
+                                    }
 
-                            // 🔴 Rejected
-                            if (step.Status === "Rejected") {
-                                stepClass = "red";
-                            }
+                                    return (
+                                        <div key={index} className={`flowStep ${stepClass}`}>
+                                            {/* 🔥 SHOW NAME INSTEAD OF ROLE */}
+                                            {/* {step.Approver || step.Role} */}
+                                            {step.ApproverName || step.ApproverName || step.Approver || step.Role}
+                                        </div>
+                                    );
+                                })}
 
-                            // 🟢 Approved
-                            else if (step.Status === "Approved") {
-                                stepClass = "green";
-                            }
-
-                            // 🟢 Last Accepted
-                            else if (isLastStep && step.Status === "Accepted") {
-                                stepClass = "green";
-                            }
-
-                            // 🟠 Current Pending
-                            else if (index === firstPending) {
-                                stepClass = "orange";
-                            }
-
-                            return (
-                                <div key={index} className={`flowStep ${stepClass}`}>
-                                    {/* 🔥 SHOW NAME INSTEAD OF ROLE */}
-                                    {/* {step.Approver || step.Role} */}
-                                    {step.ApproverName || step.ApproverName || step.Approver || step.Role}
+                            </div>
+                        </div>
+                        <div className="heading1" style={{ marginTop: "10px" }}>
+                            <label>Requestor Information</label>
+                        </div>
+                        <div className='main-formcontainer'>
+                            <div className='row mb-20'>
+                                <div className='col-md-4'>
+                                    <label htmlFor="Employee Code" className='font'>Employee Code</label> : &nbsp;&nbsp;
+                                    <label className='fonttext'> {employee.EmployeeCode} </label>
                                 </div>
-                            );
-                        })}
+                                <div className='col-md-4'>
+                                    <label htmlFor="Employee Name" className='font'>Employee Name </label> : &nbsp;&nbsp;
+                                    <label className='fonttext'>  {employee.EmployeeName}</label>
+                                </div>
+                                <div className='col-md-4'>
+                                    <label htmlFor="Employee Email" className='font'>Employee Email </label> : &nbsp;&nbsp;
+                                    <label className='fonttext'>  {employee.EmployeeEmail}</label>
+                                </div>
+                            </div>
+                            <div className='row mb-20'>
+                                <div className='col-md-4'>
+                                    <label htmlFor="Contact No" className='font'>Contact No</label> : &nbsp;&nbsp;
+                                    <label className='fonttext'>  {employee.ContactNo}</label>
+                                </div>
+                                <div className='col-md-4'>
+                                    <label htmlFor="Employee Status" className='font'>Employee Status</label> : &nbsp;&nbsp;
+                                    <label className='fonttext'>  {employee.EmployeeStatus}</label>
+                                </div>
+                                <div className='col-md-4'>
+                                    <label htmlFor="Division" className='font'>Division</label> : &nbsp;&nbsp;
+                                    <label className='fonttext'>  {employee.Division}</label>
+                                </div>
+                            </div>
+                            <div className='row mb-20'>
+                                <div className='col-md-4'>
+                                    <label htmlFor="Location" className='font'>Location</label> : &nbsp;&nbsp;
+                                    <label className='fonttext'>  {employee.Location}</label>
+                                </div>
+                                <div className='col-md-4'>
+                                    <label htmlFor="RM" className='font'>RM</label> : &nbsp;&nbsp;
+                                    <label className='fonttext'>  {employee.ReportingManager}</label>
+                                </div>
+                                <div className='col-md-4'>
+                                    <label htmlFor="HOD" className='font'>HOD</label> : &nbsp;&nbsp;
+                                    <label className='fonttext'>  {employee.HOD}</label>
+                                </div>
+                            </div>
+                            <div className='row mb-20'>
+                                <div className='col-md-4'>
+                                    <label htmlFor="Location" className='font'>Department</label> : &nbsp;&nbsp;
+                                    <label className='fonttext'>  {employee.Department}</label>
+                                </div>
+                            </div>
+                        </div>
+                        {isTenderDuplicate && (
+                            <section>
+                                <h5 style={{ color: "green" }}>
+                                    This Tender No. is available with another EMD request.
+                                </h5>
+                            </section>
+                        )}
+                        <div className="heading1" style={{ marginTop: "10px" }}>
+                            <label>EMD Request Details</label>
+                        </div>
+                        <div className='main-formcontainer'>
+                            <div className='row mb-20'>
+                                <div className='col-md-4'>
+                                    <label className='font'>Vendor Code </label>
+                                    <input value={vendorCode} className='form-control' readOnly />
+                                </div>
+                                <div className='col-md-4'>
+                                    <label className='font'>Vendor Name </label>
+                                    <input value={vendorNameTitle} className='form-control' readOnly />
 
+                                </div>
+                                <div className='col-md-4'>
+                                    <label className='font'>Vendor Site </label>.
+                                    <input value={vendorSite} readOnly className="form-control" />
+                                </div>
+                            </div>
+                            <div className='row mb-20'>
+                                {/* <div className='col-md-4'>
+                                    <label className="font">Contract Type </label>
+                                    <input value={tenderNo} readOnly className="form-control" />
+                                </div> */}
+                                <div className='col-md-4'>
+                                    <label className="font">Tender No </label>
+                                    <input value={tenderNo} readOnly className="form-control" />
+
+                                </div>
+                                <div className='col-md-4'>
+                                    <label className="font">Tender Date </label>
+                                    <input type="date" value={tenderDate} readOnly className="form-control" />
+                                </div>
+                            </div>
+                            <div className='row mb-20'>
+                                <div className='col-md-4'>
+                                    <label className="font">Tender Type </label>
+                                    <input value={tenderTypeText} readOnly className="form-control" />
+                                </div>
+                                <div className='col-md-4'>
+                                    <label className="font">Tender Amount </label>
+                                    <input value={formatINR(tenderAmount)} readOnly className="form-control" />
+                                </div>
+                                <div className='col-md-4'>
+                                    <label className="font">EMD Amount </label>
+                                    <input value={formatINR(emdAmount)} readOnly className="form-control" />
+                                </div>
+
+                            </div>
+                            <div className='row mb-20'>
+                                <div className='col-md-4'>
+                                    <label className="font">Currency </label>
+                                    <input value={currencyText} readOnly className="form-control" />
+                                </div>
+                                <div className='col-md-4'>
+                                    <label className="font">Tender Closing Date </label>
+                                    <input type="date" value={tenderClosingDate} readOnly className="form-control" />
+                                </div>
+                                <div className='col-md-4'>
+                                    <label className="font">EMD Percentage </label>
+                                    <input value={emdPercentage} className="form-control" readOnly />
+                                </div>
+
+                            </div>
+                        </div>
+                        <div className="heading1" style={{ marginTop: "10px" }}>
+                            <label>Vouching Details</label>
+                        </div>
+                        <div className='main-formcontainer'>
+                            <div className='row mb-20'>
+                                <div className='col-md-4'>
+                                    <label className='font'>Vouching Date </label>
+                                    <input type="date" className='form-control' value={vouchingDate} readOnly />
+                                </div>
+                                <div className='col-md-4'>
+                                    <label className='font'>GL </label>
+                                    <input value={glCode} readOnly className='form-control' />
+                                </div>
+                                <div className='col-md-4'>
+                                    <label className='font'>vendor Code </label>
+                                    <input value={vendorCode} readOnly className="form-control" />
+                                </div>
+                            </div>
+                            <div className='row mb-20'>
+                                <div className='col-md-4'>
+                                    <label className="font">voucher No. </label>
+                                    <input value={voucherNo} readOnly className="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="heading1" style={{ marginTop: "10px" }}>
+                            <label>UTR Details</label>
+                        </div>
+                        <div className='main-formcontainer'>
+                            <div className='row mb-20'>
+                                <div className='col-md-4'>
+                                    <label className='font'>UTR No <span className="Manstory">*</span> </label>
+                                    <input className='form-control' value={utrNo} readOnly />
+                                </div>
+                                <div className='col-md-4'>
+                                    <label className='font'>UTR Date <span className="Manstory">*</span> </label>
+                                    <input type="date" value={utrDate} readOnly className='form-control' />
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div className="heading1" style={{ marginTop: "10px" }}>
+                            <label>Work Flow History</label>
+                        </div>
+                        <div className='main-formcontainer'>
+                            <div className='row mb-20'>
+                                <div className='col-md-12'>
+                                    <div className="overflow-x-auto">
+                                        <table className="custom-table">
+                                            <thead>
+                                                <tr>
+                                                    <th className="px-4 py-2">Action By</th>
+                                                    <th className="px-4 py-2">Action Taken</th>
+                                                    <th className="px-4 py-2">Date</th>
+                                                    <th className="px-4 py-2">Comment</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {wfHistory.length > 0 ? (
+                                                    wfHistory.map((item, index) => {
+
+                                                        // const formatDate = (date: any) => {
+                                                        //   if (!date) return "-";
+                                                        //   const d = new Date(date);
+                                                        //   return isNaN(d.getTime())
+                                                        //     ? "-"
+                                                        //     : d.toLocaleString("en-GB");
+                                                        // };
+
+                                                        const formatDate = (date: any) => {
+                                                            if (!date) return "-";
+
+                                                            // Handle DD/MM/YYYY
+                                                            const parts = date.split("/");
+                                                            if (parts.length === 3) {
+                                                                const [day, month, year] = parts;
+                                                                const d = new Date(`${year}-${month}-${day}`);
+
+                                                                return isNaN(d.getTime())
+                                                                    ? "-"
+                                                                    : d.toLocaleDateString("en-GB");
+                                                            }
+
+                                                            return "-";
+                                                        };
+
+                                                        return (
+                                                            <tr key={index}>
+                                                                <td className="px-4 py-2">{item.CurrentApprover}</td>
+                                                                <td className="px-4 py-2">{item.ActionTaken}</td>
+                                                                <td className="px-4 py-2">{formatDate(item.Date)}</td>
+                                                                <td className="px-4 py-2">{item.Comment || "-"}</td>
+                                                            </tr>
+                                                        );
+                                                    })
+                                                ) : (
+                                                    <tr>
+                                                        <td colSpan={4}>No history available</td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="heading1" style={{ marginTop: "10px" }}>
+                            <label>Upload Documents</label>
+                        </div>
+                        <div className='main-formcontainer'>
+                            <div className='row mb-20'>
+                                <div className='col-md-4'>
+                                    <label className='font'> Existing Attachments </label>
+                                    {attachments.length === 0 ? (
+                                        <div>-</div>
+                                    ) : (
+                                        <ul style={{ margin: 0, paddingLeft: 18 }}>
+                                            {attachments.map((a) => (
+                                                <li key={a.ServerRelativeUrl}>
+                                                    <a href={a.ServerRelativeUrl} target="_blank" rel="noreferrer">
+                                                        {a.FileName}
+                                                    </a>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="heading1" style={{ marginTop: "10px" }}>
+                            <label>Action</label>
+                        </div>
+                        <div className='main-formcontainer'>
+                            <div className='row mb-20'>
+                                <div className='col-md-4'>
+                                    <label className='font'> Date of Receipt. <span className='Mantorystar'>*</span></label>
+                                    <input type="date" className="form-control" value={dateOfReceipt} onChange={(e) => setDateOfReceipt(e.target.value)} />
+                                </div>
+                                <div className='col-md-4'>
+                                    <label className='font'> Bank Account. <span className='Mantorystar'>*</span></label>
+                                    <input
+                                        type="number"
+                                        step="1"
+                                        value={bankAccount} className="form-control"
+                                        onChange={(e) => setBankAccount(e.target.value)}
+                                        placeholder="Enter bank account"
+                                    />
+                                </div>
+                                <div className='col-md-4'>
+                                    <label className='font'> Amount. <span className='Mantorystar'>*</span></label>
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        value={closureAmount}
+                                        onChange={(e) => setClosureAmount(e.target.value)}
+                                        placeholder="Enter amount" className="form-control"
+                                    />
+
+                                </div>
+                            </div>
+                            <div className='row mb-20'>
+                                <div className='col-md-4'>
+                                    <label className='font'> UTR No </label>
+                                    <input className="form-control" value={utrNo} />
+                                </div>
+                                <div className='col-md-4'>
+                                    <label className='font'> Comments. <span className='Mantorystar'>*</span></label>
+                                    <textarea
+                                        rows={3}
+                                        value={closureComments}
+                                        onChange={(e) => setClosureComments(e.target.value)}
+                                        placeholder="Enter comments" className="form-control"
+                                    />
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div className='row my-3'>
+                            <div className='col-md-12'>
+                                <div style={{ display: "flex", justifyContent: "center", gap: "5px" }}>
+                                    <button className="submit-btn" disabled={isSaving} onClick={onCloseSubmit}>
+                                        {isSaving ? "Saving..." : "Close"}
+                                    </button>
+                                    <button className="reset-btn" onClick={() => history.push("/TreasuryLandingPage")}>Exit</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                {/* Requestor Information */}
-                <Section title="Requestor Information">
-                    <Grid style={{ marginTop: "20px" }}>
-                        <Field label="Employee Code">
-                            <input value={employee.EmployeeCode} readOnly />
-                        </Field>
-                        <Field label="Employee Name">
-                            <input value={employee.EmployeeName} readOnly />
-                        </Field>
-                        <Field label="Division">
-                            <input value={employee.Division} readOnly />
-                        </Field>
-                        <Field label="Location">
-                            <input value={employee.Location} readOnly />
-                        </Field>
-                        <Field label="Reporting Manager">
-                            <input value={employee.RM || employee.ReportingManager} readOnly />
-                        </Field>
-                        <Field label="HOD">
-                            <input value={employee.HOD} readOnly />
-                        </Field>
-                        <Field label="Contact No">
-                            <input value={employee.ContactNo} readOnly />
-                        </Field>
-                        <Field label="Employee Status">
-                            <input value={employee.EmployeeStatus} readOnly />
-                        </Field>
-                        <Field label="Department">
-                            <input value={employee.Department} readOnly />
-                        </Field>
-                        <Field label="Employee Email" full>
-                            <input type="email" value={employee.EmployeeEmail} readOnly />
-                        </Field>
-                    </Grid>
-                </Section>
-
-                {isTenderDuplicate && (
-                    <section>
-                        <h5 style={{ color: "green" }}>
-                            This Tender No. is available with another EMD request.
-                        </h5>
-                    </section>
-                )}
-
-                {/* EMD Request Details */}
-                <Section title="EMD Request Details">
-                    <Grid>
-                        <Field label="Vendor Code">
-                            <input value={vendorCode} readOnly />
-                        </Field>
-                        <Field label="Vendor Name">
-                            <input value={vendorNameTitle} readOnly />
-                        </Field>
-                        <Field label="Vendor Site">
-                            <input value={vendorSite} readOnly />
-                        </Field>
-
-                        <Field label="Tender No.">
-                            <input value={tenderNo} readOnly />
-                        </Field>
-                        <Field label="Tender Date">
-                            <input type="date" value={tenderDate} readOnly />
-                        </Field>
-                        <Field label="Tender Type">
-                            <input value={tenderTypeText} readOnly />
-                        </Field>
-
-                        <Field label="Tender Amount">
-                            <input value={formatINR(tenderAmount)} readOnly />
-                        </Field>
-                        <Field label="EMD Amount">
-                            <input value={formatINR(emdAmount)} readOnly />
-                        </Field>
-                        <Field label="Currency">
-                            <input value={currencyText} readOnly />
-                        </Field>
-
-                        <Field label="Tender Closing Date">
-                            <input type="date" value={tenderClosingDate} readOnly />
-                        </Field>
-                        <Field label="EMD Percentage">
-                            <input value={emdPercentage} readOnly />
-                        </Field>
-                    </Grid>
-                </Section>
-
-                {/* Vouching Details (AP) */}
-                <Section title="Vouching Details">
-                    <Grid>
-                        <Field label="Vouching Date*">
-                            <input type="date" value={vouchingDate} readOnly />
-                        </Field>
-                        <Field label="GL*">
-                            <input value={glCode} readOnly />
-                        </Field>
-                        <Field label="Vendor Code*">
-                            <input value={vendorCode} readOnly />
-                        </Field>
-                        <Field label="Voucher No.*">
-                            <input value={voucherNo} readOnly />
-                        </Field>
-                    </Grid>
-                </Section>
-
-                {/* UTR Details */}
-                <Section title="UTR Details">
-                    <Grid>
-                        <Field label="UTR No*">
-                            <input value={utrNo} readOnly />
-                        </Field>
-                        <Field label="UTR Date*">
-                            <input type="date" value={utrDate} readOnly />
-                        </Field>
-                    </Grid>
-                </Section>
-
-                <Section title="Workflow History">
-                    <div className="wfTableWrapper">
-                        <table className="wfTable">
-                            <thead>
-                                <tr>
-                                    <th>Action By</th>
-                                    <th>Action</th>
-                                    <th>Date</th>
-                                    <th>Comment</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {/* {wfHistory.length > 0 ? (
-                                    wfHistory.map((item, i) => (                                       
-
-                                        <tr key={i}>
-                                            <td>{item.CurrentApprover}</td>
-                                            <td>{item.ActionTaken}</td>
-                                            <td>{new Date(item.Date).toLocaleString("en-GB")}</td>
-                                            <td>{item.Comment || "-"}</td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan={4}>No history available</td>
-                                    </tr>
-                                )} */}
-                                {wfHistory.length > 0 ? (
-                                    wfHistory.map((item, index) => {
-
-                                        // const formatDate = (date: any) => {
-                                        //   if (!date) return "-";
-                                        //   const d = new Date(date);
-                                        //   return isNaN(d.getTime())
-                                        //     ? "-"
-                                        //     : d.toLocaleString("en-GB");
-                                        // };
-
-                                        const formatDate = (date: any) => {
-                                            if (!date) return "-";
-
-                                            // Handle DD/MM/YYYY
-                                            const parts = date.split("/");
-                                            if (parts.length === 3) {
-                                                const [day, month, year] = parts;
-                                                const d = new Date(`${year}-${month}-${day}`);
-
-                                                return isNaN(d.getTime())
-                                                    ? "-"
-                                                    : d.toLocaleDateString("en-GB");
-                                            }
-
-                                            return "-";
-                                        };
-
-                                        return (
-                                            <tr key={index}>
-                                                <td>{item.CurrentApprover}</td>
-                                                <td>{item.ActionTaken}</td>
-                                                <td>{formatDate(item.Date)}</td>
-                                                <td>{item.Comment || "-"}</td>
-                                            </tr>
-                                        );
-                                    })
-                                ) : (
-                                    <tr>
-                                        <td colSpan={4}>No history available</td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </Section>
-                {/* Workflow History */}
-                {/* <Section title="Workflow History">
-                    <Grid>
-                        <Field label="UTR Details entered by">
-                            <input value="Treasury Team" readOnly />
-                        </Field>
-                        <Field label="Action Taken">
-                            <input value="UTR details" readOnly />
-                        </Field>
-                        <Field label="Action Date">
-                            <input value={utrDate || "-"} readOnly />
-                        </Field>
-
-                        <Field label="Vouching Details entered by">
-                            <input value="AP Team" readOnly />
-                        </Field>
-                        <Field label="Action Taken">
-                            <input value="Vouching details" readOnly />
-                        </Field>
-                        <Field label="Action Date">
-                            <input value={apActionDate || "-"} readOnly />
-                        </Field>
-
-                        <Field label="Approval by">
-                            <input value="MANAC Team" readOnly />
-                        </Field>
-                        <Field label="Action Taken">
-                            <input value="Approved" readOnly />
-                        </Field>
-                        <Field label="Action Date">
-                            <input value={approverActionDate || "-"} readOnly />
-                        </Field>
-                    </Grid>
-                </Section> */}
-
-                {/* Comment History */}
-                {/* <Section title="Comment History">
-                    <Grid>
-                        <Field label="Comment By">
-                            <input value="Treasury Team" readOnly />
-                        </Field>
-                        <Field label="Comment">
-                            <textarea value={treasuryComment || "UTR details updated"} readOnly rows={3} />
-                        </Field>
-                        <Field label="Comment Date">
-                            <input value={utrDate || "-"} readOnly />
-                        </Field>
-
-                        <Field label="Comment By">
-                            <input value="AP Team" readOnly />
-                        </Field>
-                        <Field label="Comment">
-                            <textarea value={apTeamComment || "Vouching details updated"} readOnly rows={3} />
-                        </Field>
-                        <Field label="Comment Date">
-                            <input value={apActionDate || "-"} readOnly />
-                        </Field>
-
-                        <Field label="Comment By">
-                            <input value="MANAC Team" readOnly />
-                        </Field>
-                        <Field label="Comment">
-                            <textarea value={approverComment || "Approving for Vouching"} readOnly rows={3} />
-                        </Field>
-                        <Field label="Comment Date">
-                            <input value={approverActionDate || "-"} readOnly />
-                        </Field>
-                    </Grid>
-                </Section> */}
-
-                {/* Uploaded Documents (all) */}
-                <Section title="Uploaded Documents">
-                    <Grid>
-                        <Field label="Existing Attachments">
-                            {attachments.length === 0 ? (
-                                <div>-</div>
-                            ) : (
-                                <ul style={{ margin: 0, paddingLeft: 18 }}>
-                                    {attachments.map((a) => (
-                                        <li key={a.ServerRelativeUrl}>
-                                            <a href={a.ServerRelativeUrl} target="_blank" rel="noreferrer">
-                                                {a.FileName}
-                                            </a>
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                        </Field>
-                    </Grid>
-                </Section>
-
-                {/* Action (Closure) */}
-                <Section title="Action">
-                    <Grid>
-                        <Field
-                            //  label="Date of Receipt*"
-                            label={<>
-                                Date of Receipt.<span style={{ color: "red" }}>*</span>
-                            </>
-                            }
-
-                        >
-                            <input type="date" value={dateOfReceipt} onChange={(e) => setDateOfReceipt(e.target.value)} />
-                        </Field>
-                        <Field
-                            //  label="Bank Account*"
-                            label={<>
-                                Bank Account.<span style={{ color: "red" }}>*</span>
-                            </>
-                            }
-                        >
-                            <input
-                                type="number"
-                                step="1"
-                                value={bankAccount}
-                                onChange={(e) => setBankAccount(e.target.value)}
-                                placeholder="Enter bank account"
-                            />
-                        </Field>
-                        <Field
-                            // label="Amount*"
-                            label={<>
-                                Amount.<span style={{ color: "red" }}>*</span>
-                            </>
-                            }
-
-                        >
-                            <input
-                                type="number"
-                                step="0.01"
-                                value={closureAmount}
-                                onChange={(e) => setClosureAmount(e.target.value)}
-                                placeholder="Enter amount"
-                            />
-                        </Field>
-                        <Field label="UTR No">
-                            <input value={utrNo} readOnly />
-                        </Field>
-                        <Field
-                            // label="Comments*" 
-                            label={<>
-                                Comments.<span style={{ color: "red" }}>*</span>
-                            </>
-                            }
-
-                            full>
-                            <textarea
-                                rows={3}
-                                value={closureComments}
-                                onChange={(e) => setClosureComments(e.target.value)}
-                                placeholder="Enter comments"
-                            />
-                        </Field>
-
-                        {/* <Field label="Attach" full>
-              <input type="file" multiple onChange={onFilesPicked} />
-              {files.length > 0 && (
-                <div style={{ marginTop: 6 }}>
-                  {files.map((f) => (
-                    <span key={f.name} style={{ marginRight: 8, fontSize: 12 }}>
-                      {f.name}
-                    </span>
-                  ))}
-                </div>
-              )}
-              <div style={{ marginTop: 8, color: "#6a6a6a", fontSize: 12 }}>
-                Tip: Stage-wise Supporting Docs prefix: <code>Treasury_*</code>, <code>AP_*</code>, <code>MANAC_*</code>.
-              </div>
-            </Field> */}
-                    </Grid>
-
-                    {/* Buttons */}
-                    <div className="button-row">
-                        {/* <button className="btn-submit" disabled={isSaving || !canClose()} onClick={onCloseSubmit}>
-                            {isSaving ? "Saving..." : "Close"}
-                        </button> */}
-                        <button className="btn-submit" onClick={onCloseSubmit}>
-                            {isSaving ? "Saving..." : "Close"}
-                        </button>
-                        <button className="btn-exit" onClick={() => history.push("/TreasuryLandingPage")}>
-                            Exit
-                        </button>
-                    </div>
-                </Section>
             </div>
         </div>
     );

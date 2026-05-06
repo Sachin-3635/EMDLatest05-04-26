@@ -5,6 +5,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import { Dropdown, IDropdownOption } from "@fluentui/react";
 import SPCRUDOPS from "../../service/BAL/spcrud";
 import { sp } from "@pnp/sp";
+import logo from "../../assets/sona-comstarlogo.png";
 
 // ---------- UI helpers ----------
 const Section = ({ title, children }: any) => (
@@ -660,283 +661,361 @@ const VouchingbyAPTeamForm = (props: ISonaEmdProps) => {
   };
 
   return (
-    <div className="forex-wrapper">
-      {/* Small debug strip — remove after verifying */}
-      {/* <div style={{ background: "#fff8dc", padding: "6px 10px", border: "1px dashed #e0c26d", marginBottom: 8 }}>
-        <b>DEBUG</b>: ItemId = {String(itemId)} | Title = {title || "-"}
-      </div> */}
-
-      {/* ================= HEADER ================= */}
-      <div className="forex-header"><h2>Vouching by AP Team</h2></div>
-
-      <div className="forex-card">
-        {/* 1) Summary */}
-        <Section title="Request Summary">
-          <Grid>
-            <Field label="EMD Request No."><input type="text" value={title} readOnly /></Field>
-            <Field label="Current Status"><input type="text" value={currentStatus || "-"} readOnly /></Field>
-          </Grid>
-        </Section>
-
-        {/* ================= APPROVAL HIERARCHY ================= */}
-        <div className="headerApproval">
-          <div className="approvalFlow">
-
-            {/* Initiator */}
-            <div className="flowStep green">
-              {employee.EmployeeName || "Initiator"}
+    <div className='MainUplodForm' style={{ margin: "5px 0px" }}>
+      <div className='row'>
+        <div className='col-md-12'>
+          <div className='Main-Boxpoup'>
+            {/* 🔹 Header */}
+            <div className="bordered">
+              <img src={logo} />
+              <h1>Vouching by AP Team </h1>
             </div>
+            <div className="headerApproval">
+              <div className="approvalFlow">
 
-            {approvalMatrix.map((step, index) => {
-
-              let stepClass = "grey";
-
-              const firstPending = approvalMatrix.findIndex(
-                (s) => s.Status === "Pending"
-              );
-
-              // 🔴 Rejected
-              if (step.Status === "Rejected") {
-                stepClass = "red";
-              }
-
-              // 🟢 Approved
-              else if (step.Status === "Approved") {
-                stepClass = "green";
-              }
-
-              // 🟠 Current Pending
-              else if (index === firstPending) {
-                stepClass = "orange";
-              }
-
-              return (
-                <div key={index} className={`flowStep ${stepClass}`}>
-                  {step.ApproverName}
+                {/* Initiator */}
+                <div className="flowStep green">
+                  {employee.EmployeeName || "Initiator"}
                 </div>
-              );
-            })}
 
-          </div>
-        </div>
+                {approvalMatrix.map((step, index) => {
 
-        {/* 2) Requestor Information */}
-        <Section title="Requestor Information">
-          <Grid style={{ marginTop: "20px" }}>
-            <Field label="Employee Code"><input type="text" value={employee.EmployeeCode} readOnly /></Field>
-            <Field label="Employee Name"><input type="text" value={employee.EmployeeName} readOnly /></Field>
-            <Field label="Division"><input type="text" value={employee.Division} readOnly /></Field>
-            <Field label="Location"><input type="text" value={employee.Location} readOnly /></Field>
-            <Field label="Reporting Manager"><input type="text" value={employee.RM || employee.ReportingManager} readOnly /></Field>
-            <Field label="HOD"><input type="text" value={employee.HOD} readOnly /></Field>
-            <Field label="Contact No"><input type="text" value={employee.ContactNo} readOnly /></Field>
-            <Field label="Employee Status"><input type="text" value={employee.EmployeeStatus} readOnly /></Field>
-            <Field label="Department"><input type="text" value={employee.Department} readOnly /></Field>
-            <Field label="Employee Email" full><input type="email" value={employee.EmployeeEmail} readOnly /></Field>
-          </Grid>
-        </Section>
+                  let stepClass = "grey";
 
-        {isTenderDuplicate && (
-          <section>
-            <h5 style={{ color: "green" }}>
-              This Tender No. is available with another EMD request.
-            </h5>
-          </section>
-        )}
+                  const firstPending = approvalMatrix.findIndex(
+                    (s) => s.Status === "Pending"
+                  );
 
-        {/* 3) EMD Request Details */}
-        <Section title="EMD Request Details">
-          <Grid>
-            <Field label="Vendor Code">
-              <Dropdown options={vendorCodeOptions} selectedKey={vendorCodeKey} disabled />
-            </Field>
-            <Field label="Vendor Name">
-              <Dropdown options={vendorNameOptions} selectedKey={vendorName} disabled />
-            </Field>
-            <Field label="Vendor Site">
-              <Dropdown options={vendorSiteOptions} selectedKey={vendorSiteKey} disabled />
-            </Field>
-            <Field label="Contract Type">
-              <Dropdown options={contractTypeOptions} selectedKey={contractType} disabled />
-            </Field>
-            <Field label="Tender No."><input value={vendor.TenderNo} readOnly /></Field>
-            <Field label="Tender Date"><input type="date" value={vendor.TenderDate} readOnly /></Field>
-            <Field label="Tender Type">
-              <Dropdown options={tenderTypeOptions} selectedKey={tenderType} disabled />
-            </Field>
-            <Field label="Tender Amount"><input value={vendor.TenderAmount} readOnly /></Field>
-            <Field label="EMD Amount"><input value={vendor.EMDAmount} readOnly /></Field>
-            <Field label="Currency">
-              <Dropdown options={currencyOptions} selectedKey={currency} disabled />
-            </Field>
-            <Field label="Tender Closing Date"><input type="date" value={vendor.TenderClosingDate} readOnly /></Field>
-            <Field label="EMD Percentage"><input value={vendor.EMDPercentage} readOnly /></Field>
-            <Field label="Mode Of Payment">
-              <Dropdown options={modeOfPaymentOptions} selectedKey={modeOfPayment} disabled />
-            </Field>
-            <Field label="Product Type">
-              <Dropdown options={productTypeOptions} selectedKey={productType} disabled />
-            </Field>
-          </Grid>
-        </Section>
-        <Section title="Workflow History">
+                  // 🔴 Rejected
+                  if (step.Status === "Rejected") {
+                    stepClass = "red";
+                  }
 
-          <div className="wfTableWrapper">
+                  // 🟢 Approved
+                  else if (step.Status === "Approved") {
+                    stepClass = "green";
+                  }
 
-            <table className="wfTable">
-              <thead>
-                <tr>
-                  <th>Action By</th>
-                  <th>Action Taken</th>
-                  <th>Date</th>
-                  <th>Comment</th>
-                </tr>
-              </thead>
+                  // 🟠 Current Pending
+                  else if (index === firstPending) {
+                    stepClass = "orange";
+                  }
 
-              <tbody>
-                {wfHistory.length > 0 ? (
-                  wfHistory.map((item, index) => {
+                  return (
+                    <div key={index} className={`flowStep ${stepClass}`}>
+                      {step.ApproverName}
+                    </div>
+                  );
+                })}
 
-                    const formatDate = (date: any) => {
-                      if (!date) return "-";
-
-                      // Handle DD/MM/YYYY
-                      const parts = date.split("/");
-                      if (parts.length === 3) {
-                        const [day, month, year] = parts;
-                        const d = new Date(`${year}-${month}-${day}`);
-
-                        return isNaN(d.getTime())
-                          ? "-"
-                          : d.toLocaleDateString("en-GB");
-                      }
-
-                      return "-";
-                    };
-
-                    return (
-                      <tr key={index}>
-                        <td>{item.CurrentApprover}</td>
-                        <td>{item.ActionTaken}</td>
-                        <td>{formatDate(item.Date)}</td>
-                        <td>{item.Comment || "-"}</td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  <tr>
-                    <td colSpan={4}>No history available</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-
-          </div>
-        </Section>
-        {/* 4) AP Action */}
-        <Section title="Action">
-          <Grid>
-            <Field
-              // label="Vouching Date"
-              label={
-                <span>Vouching Date<span style={{ color: "red" }}>*</span></span>
-              }
-
-            >
-              <input type="date" value={apVouchingDate} onChange={(e) => setVouchingDate(e.target.value)} />
-            </Field>
-            <Field
-              //  label="GL Code*"
-              label={
-                <span>GL Code<span style={{ color: "red" }}>*</span></span>
-              }
-            >
-              <input value={apGLCode} onChange={(e) => setGLCode(e.target.value)} placeholder="Enter GL Code" />
-            </Field>
-            <Field
-              // label="Voucher No.*"
-              label={
-                <span>Voucher No.<span style={{ color: "red" }}>*</span></span>
-              }
-            >
-              <input value={apVoucherNo} onChange={(e) => setVoucherNo(e.target.value)} placeholder="Enter Voucher No." />
-            </Field>
-            <Field
-              // label="Comments*"
-              label={
-                <span>Comments<span style={{ color: "red" }}>*</span></span>
-              }
-            >
-              <textarea rows={3} value={apComment} onChange={(e) => setApTeamComment(e.target.value)} placeholder="Enter your comments" />
-            </Field>
-          </Grid>
-        </Section>
-
-        {/* 5) Upload (AP supporting) */}
-        <Section title="Upload Documents">
-          <Grid>
-            <Field label="Attach">
-              <input type="file" multiple onChange={(e) => { if (e.target.files) setFiles(Array.from(e.target.files)); }} />
-            </Field>
-          </Grid>
-        </Section>
-
-
-
-        {/* 6) Uploaded Documents (BOTTOM) */}
-        <Section title="Uploaded Documents">
-          <Grid>
-            <Field label="Attach">
-              {attachments.length === 0 ? <div>-</div> : (
-                <ul style={{ margin: 0, paddingLeft: 18 }}>
-                  {attachments.map(a => (
-                    <li key={a.ServerRelativeUrl}>
-                      <a href={a.ServerRelativeUrl} target="_blank" rel="noreferrer">{a.FileName}</a>
-                    </li>
-                  ))}
-                </ul>
+              </div>
+            </div>
+            <div className='borderedbox'>
+              {/* 🔹 Section Title */}
+              <div className="heading1" style={{ marginTop: "10px" }}>
+                <label>Request Summary</label>
+              </div>
+              <div className='main-formcontainer'>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label htmlFor="EMD Request No." className='font'>EMD Request No.</label> : &nbsp;&nbsp;
+                    <label className='fonttext'> {title} </label>
+                  </div>
+                  <div className='col-md-4'>
+                    <label htmlFor="Current Status" className='font'>Current Status</label> : &nbsp;&nbsp;
+                    <label className='fonttext'> {currentStatus || "-"} </label>
+                  </div>
+                </div>
+              </div>
+              <div className="heading1" style={{ marginTop: "10px" }}>
+                <label>Requestor Information</label>
+              </div>
+              <div className='main-formcontainer'>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label htmlFor="Employee Code" className='font'>Employee Code</label> : &nbsp;&nbsp;
+                    <label className='fonttext'> {employee.EmployeeCode} </label>
+                  </div>
+                  <div className='col-md-4'>
+                    <label htmlFor="Employee Name" className='font'>Employee Name </label> : &nbsp;&nbsp;
+                    <label className='fonttext'>  {employee.EmployeeName}</label>
+                  </div>
+                  <div className='col-md-4'>
+                    <label htmlFor="Employee Email" className='font'>Employee Email </label> : &nbsp;&nbsp;
+                    <label className='fonttext'>  {employee.EmployeeEmail}</label>
+                  </div>
+                </div>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label htmlFor="Contact No" className='font'>Contact No</label> : &nbsp;&nbsp;
+                    <label className='fonttext'>  {employee.ContactNo}</label>
+                  </div>
+                  <div className='col-md-4'>
+                    <label htmlFor="Employee Status" className='font'>Employee Status</label> : &nbsp;&nbsp;
+                    <label className='fonttext'>  {employee.EmployeeStatus}</label>
+                  </div>
+                  <div className='col-md-4'>
+                    <label htmlFor="Division" className='font'>Division</label> : &nbsp;&nbsp;
+                    <label className='fonttext'>  {employee.Division}</label>
+                  </div>
+                </div>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label htmlFor="Location" className='font'>Location</label> : &nbsp;&nbsp;
+                    <label className='fonttext'>  {employee.Location}</label>
+                  </div>
+                  <div className='col-md-4'>
+                    <label htmlFor="RM" className='font'>RM</label> : &nbsp;&nbsp;
+                    <label className='fonttext'>  {employee.ReportingManager}</label>
+                  </div>
+                  <div className='col-md-4'>
+                    <label htmlFor="HOD" className='font'>HOD</label> : &nbsp;&nbsp;
+                    <label className='fonttext'>  {employee.HOD}</label>
+                  </div>
+                </div>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label htmlFor="Location" className='font'>Department</label> : &nbsp;&nbsp;
+                    <label className='fonttext'>  {employee.Department}</label>
+                  </div>
+                </div>
+              </div>
+              {isTenderDuplicate && (
+                <section>
+                  <h5 style={{ color: "green" }}>
+                    This Tender No. is available with another EMD request.
+                  </h5>
+                </section>
               )}
-            </Field>
-          </Grid>
-        </Section>
+              <div className="heading1" style={{ marginTop: "10px" }}>
+                <label>EMD Request Details</label>
+              </div>
+              <div className='main-formcontainer'>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label className='font'>Vendor Code </label>
+                    <Dropdown options={vendorCodeOptions}
+                      className='formtext-control'
+                      selectedKey={vendorCodeKey} disabled />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className='font'>Vendor Name </label>
+                    <Dropdown options={vendorNameOptions} className='formtext-control'
+                      selectedKey={vendorName} disabled />
 
-        {/* 7) Workflow History (BOTTOM) */}
-        {/* <Section title="Workflow History">
-          <Grid>
-            <Field label="Approval By"><input type="text" value="MANAC Team" readOnly /></Field>
-            <Field label="Action Taken"><input type="text" value="Approved" readOnly /></Field>
-            <Field label="Action Date"><input type="text" value={approverActionDate || "-"} readOnly /></Field>
-            <Field label="Supporting Docs" full>
-              {attachments.length === 0 ? <div>-</div> : (
-                <ul style={{ margin: 0, paddingLeft: 18 }}>
-                  {attachments.map(a => (
-                    <li key={`wf-${a.ServerRelativeUrl}`}>
-                      <a href={a.ServerRelativeUrl} target="_blank" rel="noreferrer">{a.FileName}</a>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </Field>
-          </Grid>
-        </Section> */}
+                  </div>
+                  <div className='col-md-4'>
+                    <label className='font'>Vendor Site </label>.
+                    <Dropdown options={vendorSiteOptions} className='formtext-control'
+                      selectedKey={vendorSiteKey} disabled />
 
+                  </div>
+                </div>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label className="font">Contract Type </label>
+                    <Dropdown options={contractTypeOptions} className='formtext-control'
+                      selectedKey={contractType} disabled />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className="font">Tender No </label>
+                    <input value={vendor.TenderNo} className='form-control' readOnly />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className="font">Tender Date </label>
+                    <input type="date" value={vendor.TenderDate} readOnly className='form-control' />
 
-        {/* 8) Comment History (BOTTOM) */}
-        {/* <Section title="Comment History">
-          <Grid>
-            <Field label="Comment By"><input type="text" value="MANAC Team" readOnly /></Field>
-            <Field label="Comment"><textarea value={approverComment || "-"} readOnly rows={3} /></Field>
-            <Field label="Comment Date"><input type="text" value={approverActionDate || "-"} readOnly /></Field>
-          </Grid>
-        </Section> */}
+                  </div>
+                </div>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label className="font">Tender Type </label>
+                    <input value={vendor.TenderAmount} readOnly className="form-control" />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className="font">Tender Amount </label>
+                    <input value={vendor.TenderAmount} readOnly className="form-control" />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className="font">EMD Amount </label>
+                    <input value={vendor.EMDAmount} readOnly className="form-control" />
+                  </div>
 
-        <div className="button-row">
-          <button className="btn-submit" onClick={onsubmit}>Submit</button>
-          <button className="btn-exit" onClick={() => history.goBack()}>Exit</button>
+                </div>
+
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label className="font">Currency </label>
+                    <Dropdown options={currencyOptions}
+                      className='formtext-control'
+                      selectedKey={currency} disabled />
+
+                  </div>
+                  <div className='col-md-4'>
+                    <label className="font">Tender Closing Date </label>
+                    <input type="date" value={vendor.TenderClosingDate} readOnly className="form-control" />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className="font">EMD Percentage </label>
+                    <input value={vendor.EMDPercentage} readOnly className="form-control" />
+                  </div>
+
+                </div>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label className="font">Mode of Payment </label>
+                    <Dropdown options={modeOfPaymentOptions} className='formtext-control'
+                      selectedKey={modeOfPayment} disabled />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className="font">Product Type </label>
+                    <Dropdown options={productTypeOptions} className='formtext-control'
+                      selectedKey={productType} disabled />
+                  </div>
+                </div>
+              </div>
+              <div className="heading1" style={{ marginTop: "10px" }}>
+                <label>Work Flow History</label>
+              </div>
+              <div className='main-formcontainer'>
+                <div className='row mb-20'>
+                  <div className='col-md-12'>
+                    <div className="overflow-x-auto">
+                      <table className="custom-table">
+                        <thead>
+                          <tr>
+                            <th className="px-4 py-2">Action By</th>
+                            <th className="px-4 py-2">Action Taken</th>
+                            <th className="px-4 py-2">Date</th>
+                            <th className="px-4 py-2">Comment</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          {wfHistory.map((item, index) => {
+                            const formatDate = (date: any) => {
+                              if (!date) return "-";
+
+                              // Handle DD/MM/YYYY
+                              const parts = date.split("/");
+                              if (parts.length === 3) {
+                                const [day, month, year] = parts;
+                                const d = new Date(`${year}-${month}-${day}`);
+
+                                return isNaN(d.getTime())
+                                  ? "-"
+                                  : d.toLocaleDateString("en-GB");
+                              }
+
+                              return "-";
+                            };
+
+                            const getStatusClass = () => {
+                              if (item.ActionTaken?.toLowerCase().includes("approved")) return "approvedRow";
+                              if (item.ActionTaken?.toLowerCase().includes("rejected")) return "rejectedRow";
+                              if (item.ActionTaken?.toLowerCase().includes("submitted")) return "submittedRow";
+                              if (item.ActionTaken?.toLowerCase().includes("send back")) return "sendBackRow";
+                              return "";
+                            };
+
+                            return (
+                              <tr key={index} className={getStatusClass()}>
+
+                                <td className="px-4 py-2">
+                                  <div className="wfUser">
+                                    <div className="wfAvatar">
+                                      {item.CurrentApprover?.charAt(0)}
+                                    </div>
+                                    {item.CurrentApprover}
+                                  </div>
+                                </td>
+
+                                <td className="wfAction">
+                                  {item.ActionTaken}
+                                </td>
+
+                                <td className="px-4 py-2">{formatDate(item.Date)}</td>
+
+                                <td className="px-4 py-2">{item.Comment || "-"}</td>
+
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="heading1" style={{ marginTop: "10px" }}>
+                <label>Action</label>
+              </div>
+              <div className='main-formcontainer'>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label className='font'> Vouching Date <span className='Mantorystar'>*</span></label>
+                    <input type="date" className="form-control" value={apVouchingDate} onChange={(e) => setVouchingDate(e.target.value)} />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className='font'> GL Code <span className='Mantorystar'>*</span></label>
+                    <input type="text" className="form-control" value={apGLCode} onChange={(e) => setGLCode(e.target.value)} />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className='font'>Voucher No. <span className='Mantorystar'>*</span></label>
+                    <input className="form-control" value={apVoucherNo} onChange={(e) => setVoucherNo(e.target.value)} placeholder="Enter Voucher No." />
+                  </div>
+                </div>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label className='font'> Comments </label>
+                    <textarea className="form-control" rows={3} value={apComment} onChange={(e) => setApTeamComment(e.target.value)} placeholder="Enter your comments" />
+                  </div>
+                </div>
+              </div>
+              <div className="heading1" style={{ marginTop: "10px" }}>
+                <label>Upload Documents</label>
+              </div>
+              <div className='main-formcontainer'>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label className='font'> Attach </label>
+                    <input type="file" className="form-control" multiple onChange={(e) => { if (e.target.files) setFiles(Array.from(e.target.files)); }} />
+                  </div>
+                </div>
+              </div>
+              <div className="heading1" style={{ marginTop: "10px" }}>
+                <label>Uploaded Documents</label>
+              </div>
+              <div className='main-formcontainer'>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label className='font'> Attach </label>
+                    {attachments.length === 0 ? <div>-</div> : (
+                      <ul style={{ margin: 0, paddingLeft: 18 }}>
+                        {attachments.map(a => (
+                          <li key={a.ServerRelativeUrl}>
+                            <a href={a.ServerRelativeUrl} target="_blank" rel="noreferrer">{a.FileName}</a>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className='row my-3'>
+                <div className='col-md-12'>
+                  <div style={{ display: "flex", justifyContent: "center", gap: "5px" }}>
+                    <button className="submit-btn" onClick={onsubmit}>Submit</button>
+                    <button className="reset-btn" onClick={() => history.goBack()}>Exit</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  );
+      );
 };
 
 export default VouchingbyAPTeamForm;

@@ -4,6 +4,8 @@ import type { ISonaEmdProps } from './ISonaEmdProps';
 import { escape } from '@microsoft/sp-lodash-subset';
 import { HashRouter as Router, Switch, Route, useLocation } from 'react-router-dom';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import Sidebar from '../components/Pages/Sidebar';
 import { InitiatorDashboard } from '../components/Pages/InitiatorDashboard';
 import MyRequests from './Pages/MyRequests';
@@ -45,7 +47,10 @@ const SonaEmd: React.FC<ISonaEmdProps> = (props) => {
 
     <div className="container-fluid" style={{ display: 'flex', width: '100%' }}>
       {!hideSidebar && <Sidebar {...props} />}
-      <div className="main">
+      <div className="main" style={{
+        width: hideSidebar ? "100%" : "calc(100% - 250px)",
+        transition: "width 0.3s ease"
+      }}>
         <Switch>
           <Route exact path="/InitiatorDashboard" render={() => <InitiatorDashboard {...props} />} />
           <Route exact path="/" render={() => <MyRequests {...props} />} />
