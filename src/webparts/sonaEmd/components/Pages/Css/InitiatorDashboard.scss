@@ -22,6 +22,8 @@
   margin: 0;
 }
 
+
+
 /* Filter Section */
 .filter-section {
   margin: 15px 20px;
@@ -54,6 +56,10 @@
   background-color: #333;
 }
 
+
+
+
+
 /* Table Section */
 .table-section {
   margin: 0 20px;
@@ -67,16 +73,29 @@
   border-collapse: collapse;
 }
 
+// .custom-table th {
+//   background-color: #000;
+//   color: #fff;
+//   padding: 10px;
+//   font-weight: 500;
+// }
+
+// .custom-table td {
+//   padding: 10px;
+//   border-bottom: 1px solid #ddd;
+// }
+
 .custom-table th {
-  background-color: #000;
-  color: #fff;
-  padding: 10px;
-  font-weight: 500;
+    background-color: #000;
+    color: #fff;
 }
 
+.custom-table th,
 .custom-table td {
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
+    border: 1px solid #ddd;
+    padding: 12px 15px;
+    text-align: left;
+    white-space: nowrap;
 }
 
 .custom-table tbody tr:hover {
@@ -144,5 +163,12 @@
 
 .filter-left .form-control {
   height: 38px;       // equal height
+  font-size: 14px;
+}
+
+
+.form-control,
+.formtext-control {
+  height: 32px;
   font-size: 14px;
 }

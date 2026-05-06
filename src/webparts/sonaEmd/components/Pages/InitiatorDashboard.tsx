@@ -78,7 +78,7 @@ export const InitiatorDashboard: React.FC<ISonaEmdProps> = (
       data = data.filter((item) =>
         Object.values({
           requestNo: item.ForexNumber,
-         // requestDate: formatDate(item.RequestDate),
+          // requestDate: formatDate(item.RequestDate),
           vendorName: item.VendorName,
           EmployeeCode: item.EmployeeCode,
           EmployeeName: item.EmployeeName,
@@ -112,150 +112,174 @@ export const InitiatorDashboard: React.FC<ISonaEmdProps> = (
     currentPage * itemsPerPage
   );
 
-return (
-  <div className="dashboard-wrapper">
+  return (
+    <div className="dashboard-wrapper">
 
-    {/* Header (UNCHANGED) */}
-    <div className="header">
-      <div className="left-banner">
-        <div className="logo-text">
-          <h2>Forex Initiation Dashboard</h2>
+      {/* Header (UNCHANGED) */}
+      <div className="header">
+        <div className="left-banner">
+          <div className="logo-text">
+            <h2>Forex Initiation Dashboard</h2>
+          </div>
         </div>
       </div>
-    </div>
-
-    {/* Filters */}
-    <div className="filter-section">
-      <div className="filter-left">
-        <input
-          type="text"
-          placeholder="Search..."
-          className="form-control"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-
-        <select
-          className="form-control"
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-        >
-          <option value="All">All Status</option>
-          <option value="Draft">Draft</option>
-          <option value="Submitted">Submitted</option>
-          <option value="Approved">Approved</option>
-          <option value="Send back">Send back</option>
-          <option value="Rejected">Rejected</option>
-        </select>
+      <div className='col-md-12 px-2 py-2 d-flex justify-content-between align-items-center flex-wrap'>
+        <div className=" d-flex justify-content-between align-items-center" style={{ gap: "5px" }}>
+          <input type="text" placeholder="Search by Tender No, Vendor, Amount..."
+            className="form-control" style={{ width: "250px" }}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <select
+            className="form-control"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            style={{ width: "250px" }}
+          >
+            <option value="All">All Status</option>
+            <option value="Draft">Draft</option>
+            <option value="Submitted">Submitted</option>
+            <option value="Approved">Approved</option>
+            <option value="Send back">Send back</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+        <div className='Dashbaordcreatebutton'>
+          <Link to="/EMDRequestForm" className="create-button"> + New Request </Link>
+        </div>
       </div>
+      <main className="Main-Dash mx-2">
+        <div className="overflow-x-auto">
+          <div className="table-vert-scroll">
 
-      <Link to="/EMDRequestForm" className="create-button">
-        + New Request
-      </Link>
-    </div>
-
-    {/* Table */}
-    <div className="table-section">
-      <div className="table-vert-scroll">
-        <table className="custom-table">
-          <thead>
-            <tr>
-              <th>Request No.</th>
-              <th>EmployeeCode</th>
-              <th>Employee Name</th>
-              <th>Request Date</th> 
-              <th>Location</th>
-              <th>Vendor Name</th>
-              <th>Amount</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan={8} className="text-center">
-                  Loading data...
-                </td>
-              </tr>
-            ) : paginatedData.length === 0 ? (
-              <tr>
-                <td colSpan={8} className="text-center">
-                  No records found
-                </td>
-              </tr>
-            ) : (
-              paginatedData.map((item) => (
-                <tr key={item.ID}>
-                  <td>{item.ForexNumber}</td>
-                  <td>{item.EmployeeCode}</td>
-                  <td>{item.EmployeeName}</td>
-                  <td>{formatDate(item.RequestedOn)}</td>
-                  <td>{item.Location}</td>
-                  <td>{item.VendorName}</td>
-                  <td>₹ {item.TotalAmount || "-"}</td>
-                  <td>
-                    <span
-                      className={`status-badge ${item.Status?.replace(" ", "-")}`}
-                    >
-                      {item.Status}
-                    </span>
-                  </td>
-                  <td>
-                    {item.Status === "Send back" ||
-                    item.Status === "Draft" ? (
-                      <Link to={`/ViewForm/${item.ID}`}>
-                        <img src={Edit} width={16} alt="Edit" />
-                      </Link>
-                    ) : (
-                      <>
-                        <Link to={`/EditRequest/${item.ID}`}>
-                          <img src={View} width={16} alt="View" />
-                        </Link>
-
-                       
-                      </>
-                    )}
-                  </td>
+            <table className="custom-table min-w-full bg-white rounded-2xl shadow-md">
+              <thead
+                style={{ backgroundColor: "#3c3e45" }}
+                className="text-white"
+              >
+                <tr>
+                  <th className="px-4 py-2">Request No.</th>
+                  <th className="px-4 py-2">EmployeeCode</th>
+                  <th className="px-4 py-2">Employee Name</th>
+                  <th className="px-4 py-2">Request Date</th>
+                  <th className="px-4 py-2">Location</th>
+                  <th className="px-4 py-2">Vendor Name</th>
+                  <th className="px-4 py-2">Amount</th>
+                  <th className="px-4 py-2">Status</th>
+                  <th className="px-4 py-2">Action</th>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan={8} className="text-center">
+                      Loading data...
+                    </td>
+                  </tr>
+                ) : paginatedData.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="text-center">
+                      No records found
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedData.map((item) => (
+                    <tr key={item.ID}>
+                      <td className="px-4 py-2">{item.ForexNumber}</td>
+                      <td className="px-4 py-2">{item.EmployeeCode}</td>
+                      <td className="px-4 py-2">{item.EmployeeName}</td>
+                      <td className="px-4 py-2">{formatDate(item.RequestedOn)}</td>
+                      <td className="px-4 py-2">{item.Location}</td>
+                      <td className="px-4 py-2">{item.VendorName}</td>
+                      <td className="px-4 py-2">₹ {item.TotalAmount || "-"}</td>
+                      <td className="px-4 py-2">
+                        <span
+                          className={`status-badge ${item.Status?.replace(" ", "-")}`}
+                        >
+                          {item.Status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2">
+                        {item.Status === "Send back" ||
+                          item.Status === "Draft" ? (
+                          <Link to={`/ViewForm/${item.ID}`}>
+                            <img src={Edit} width={16} alt="Edit" />
+                          </Link>
+                        ) : (
+                          <>
+                            <Link to={`/EditRequest/${item.ID}`}>
+                              <img src={View} width={16} alt="View" />
+                            </Link>
 
-      {/* Pagination */}
-      <div className="pagination">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          <img src={Left} width={14} />
-        </button>
 
-        {Array.from({ length: totalPages }, (_, i) => i + 1)
-          .filter((page) => Math.abs(page - currentPage) <= 2)
-          .map((page) => (
-            <button
-              key={page}
-              onClick={() => handlePageChange(page)}
-              className={currentPage === page ? "active" : ""}
-            >
-              {page}
-            </button>
-          ))}
+                          </>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
 
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          <img src={Right} width={14} />
-        </button>
-      </div>
+          {/* Pagination */}
+          <div className="flex justify-center mt-6 overflow-x-auto">
+            <div className="flex space-x-2 flex-nowrap px-4 py-2 bg-#2149d5 rounded shadow" style={{ textAlign: "end" }}>
+              {/* Previous Button */}
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                style={{
+                  backgroundColor: "#fff",
+                  border: "1px solid #000 !important",
+                  marginRight: "5px",
+                  opacity: currentPage === 1 ? 0.5 : 1,
+                }}
+                className="px-3 py-1 border rounded"
+              >
+                <img src={Left} alt="" width={15} />
+              </button>
+              {/* Main Page Numbers */}
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((page) => Math.abs(page - currentPage) <= 2)
+                .map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    style={{
+                      backgroundColor: currentPage === page ? "#3c3e45" : "#fff",
+                      color: currentPage === page ? "#fff" : "#000",
+                      fontWeight: currentPage === page ? "bold" : "normal",
+                      margin: currentPage === page ? "5px" : "5px",
+                    }}
+                    className="px-3 py-1 border rounded"
+                  >
+                    {page}
+                  </button>
+                ))}
+
+
+
+              {/* Next Button */}
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                style={{
+                  backgroundColor: "#fff",
+                  border: "1px solid #000 !important",
+                  marginLeft: "5px",
+                  opacity: currentPage === totalPages ? 0.5 : 1,
+                }}
+                className="px-3 py-1 border rounded"
+              >
+                <img src={Right} alt="" width={15} />
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
-  </div>
-);
+  );
 
 
 };

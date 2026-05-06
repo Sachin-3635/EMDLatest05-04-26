@@ -11,7 +11,7 @@ import View from "../../assets/Eye.png";
 import Edit from "../../assets/Pencil.png";
 import Renew from "../../assets/Renew.png";
 
-type Lookup<T = string> = { Name?: T;  Title?: T; Currency?: T; TenderType?: T };
+type Lookup<T = string> = { Name?: T; Title?: T; Currency?: T; TenderType?: T };
 
 interface EmdItem {
   Id: number;
@@ -101,7 +101,7 @@ export const ApprovalDashboard: React.FC<ISonaEmdProps> = (props: ISonaEmdProps)
       // const filter = "(Status eq 'Pending for Approval') or (Status eq 'Pending for Vouching') or (Status eq 'Pending for Payment')";
       const currentUserId = props.context.pageContext.legacyPageContext.userId;
 
-const filter = `Status eq 'Pending for Approval' and CurrentApproverId eq ${currentUserId}`; // fetch all, then filter client-side
+      const filter = `Status eq 'Pending for Approval' and CurrentApproverId eq ${currentUserId}`; // fetch all, then filter client-side
 
       const items: EmdItem[] = await spCrudOps.getData(
         "EMDDetails",
@@ -194,7 +194,7 @@ const filter = `Status eq 'Pending for Approval' and CurrentApproverId eq ${curr
   const getStatusClass = (status?: string) => {
     const s = (status || "Pending for Approval").toLowerCase();
     if (s === "pending for vouching") return "badge badge-vouching";
-    if (s === "pending for payment")  return "badge badge-payment";
+    if (s === "pending for payment") return "badge badge-payment";
     return "badge badge-approval"; // default: Pending for Approval
   };
 
@@ -209,24 +209,18 @@ const filter = `Status eq 'Pending for Approval' and CurrentApproverId eq ${curr
           </div>
         </div>
       </div>
-
-      {/* Filters */}
-      <div className="filter-section">
-        <div className="filter-left">
-          <input
-            type="text"
-            placeholder="Search by EMD No, Tender No, Vendor, Amount..."
-            className="form-control"
+      <div className='col-md-12 px-2 py-2 d-flex justify-content-between align-items-center flex-wrap'>
+        <div className=" d-flex justify-content-between align-items-center" style={{ gap: "5px" }}>
+          <input type="text" placeholder="Search by Tender No, Vendor, Amount..."
+            className="form-control" style={{ width: "250px" }}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-
-          {/* Status filter */}
           <select
             className="form-control"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as any)}
-            style={{ marginLeft: 8 }}
+            style={{ width: "250px" }}
           >
             <option value="All">All Status</option>
             <option value="Pending for Approval">Pending for Approval</option>
@@ -234,104 +228,127 @@ const filter = `Status eq 'Pending for Approval' and CurrentApproverId eq ${curr
             <option value="Pending for Payment">Pending for Payment</option>
           </select>
         </div>
+
       </div>
 
-      {/* Table */}
-      <div className="table-section">
-        <div className="table-vert-scroll">
-          <table className="custom-table">
-            <thead>
-              <tr>
-                <th>EMD Request No.</th>
-                <th>EMD Requester.</th>
-                <th>Tender Type</th>
-                <th>Tender No.</th>
-                <th>Customer/Vendor</th>
-                <th>EMD Amount</th>
-                <th>Currency</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
+      <main className="Main-Dash mx-2">
+        <div className="overflow-x-auto">
+          <div className="table-vert-scroll">
 
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan={8} className="text-center">Loading data...</td>
-                </tr>
-              ) : paginatedData.length === 0 ? (
-                <tr>
-                  <td colSpan={8} className="text-center">No records found</td>
-                </tr>
-              ) : (
-                paginatedData.map((item) => (
-                  <tr key={item.Id}>
-                    <td>{item.Title || "-"}</td>
-                   <td>{item.Author?.Title}</td>
-                    <td>{item.TenderType?.TenderType || "-"}</td>
-                    <td>{item.TenderNo || "-"}</td>
-                    <td>{item.VendorName?.Name || "-"}</td>
-                    <td>{item.EMDAmount ? `₹ ${formatAmount(item.EMDAmount)}` : "-"}</td>
-                    <td>{item.Currency?.Currency || "-"}</td>
-
-                    <td>
-                      <span className={getStatusClass(item.Status)}>
-                        {item.Status || "Pending for Approval"}
-                      </span>
-                    </td>
-
-                    <td>
-                      {/* {item.Status === "Pending for Approval" ? (
-                        <Link to={`/MANACApprovalForm?ItemId=${item.Id}`}>
-                          <img src={Edit} width={16} alt="Edit" />
-                        </Link>
-                      ) : (
-                        <Link to={`/MANACApprovalForm?ItemId=${item.Id}`}>
-                          <img src={View} width={16} alt="View" />
-                        </Link>
-                      )} */}
-                          <Link to={`/ViewForm?ItemId=${item.Id}`}>
-                          <img src={View} width={16} alt="View" />
-                        </Link>
-
-                        <Link to={`/MANACApprovalForm?ItemId=${item.Id}`}>
-                          <img src={Edit} width={16} alt="Edit" />
-                        </Link>
-
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Pagination */}
-        <div className="pagination">
-          <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
-            <img src={Left} width={14} alt="Previous" />
-          </button>
-
-          {Array.from({ length: totalPages }, (_, i) => i + 1)
-            .filter((page) => Math.abs(page - currentPage) <= 2)
-            .map((page) => (
-              <button
-                key={page}
-                onClick={() => handlePageChange(page)}
-                className={currentPage === page ? "active" : ""}
+            <table className="custom-table min-w-full bg-white rounded-2xl shadow-md">
+              <thead
+                style={{ backgroundColor: "#3c3e45" }}
+                className="text-white"
               >
-                {page}
-              </button>
-            ))}
+                <tr>
+                  <th className="px-4 py-2">EMD Request No.</th>
+                  <th className="px-4 py-2">EMD Requester.</th>
+                  <th className="px-4 py-2">Tender No.</th>
+                  <th className="px-4 py-2">Tender Type</th>
+                  <th className="px-4 py-2">Customer/Vendor</th>
+                  <th className="px-4 py-2">Employee Name</th>
+                  <th className="px-4 py-2">EMD Amount</th>
+                  <th className="px-4 py-2">Currency</th>
+                  <th className="px-4 py-2">Status</th>
+                  <th className="px-4 py-2">View</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan={10} className="text-center">Loading data...</td>
+                  </tr>
+                ) : paginatedData.length === 0 ? (
+                  <tr>
+                    <td colSpan={10} className="text-center">No records found</td>
+                  </tr>
+                ) : (
+                  paginatedData.map((item) => (
+                    <tr key={item.Id}>
+                      <td className="px-4 py-2">{item.Title || "-"}</td>
+                      <td className="px-4 py-2">{item.Author?.Title}</td>
+                      <td className="px-4 py-2">{item.TenderType?.TenderType || "-"}</td>
+                      <td className="px-4 py-2">{item.TenderNo || "-"}</td>
+                      <td className="px-4 py-2">{item.VendorName?.Name || "-"}</td>
+                      <td className="px-4 py-2">{item.EMDAmount ? `₹ ${formatAmount(item.EMDAmount)}` : "-"}</td>
+                      <td className="px-4 py-2">{item.Currency?.Currency || "-"}</td>
+                      <td className="px-4 py-2">
+                        <span className={getStatusClass(item.Status)}>
+                          {item.Status || "Pending for Approval"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2">
+                        <Link to={`/ViewForm?ItemId=${item.Id}`}>
+                          <img src={View} width={16} alt="View" />
+                        </Link>
 
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages || totalPages === 0}
-          >
-            <img src={Right} width={14} alt="Next" />
-          </button>
+                        <Link to={`/MANACApprovalForm?ItemId=${item.Id}`}>
+                          <img src={Edit} width={16} alt="Edit" />
+                        </Link>
+
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+          {/* Pagination */}
+          <div className="flex justify-center mt-6 overflow-x-auto">
+            <div className="flex space-x-2 flex-nowrap px-4 py-2 bg-#2149d5 rounded shadow" style={{ textAlign: "end" }}>
+              {/* Previous Button */}
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                style={{
+                  backgroundColor: "#fff",
+                  border: "1px solid #000 !important",
+                  marginRight: "5px",
+                  opacity: currentPage === 1 ? 0.5 : 1,
+                }}
+                className="px-3 py-1 border rounded"
+              >
+                <img src={Left} alt="" width={15} />
+              </button>
+              {/* Main Page Numbers */}
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((page) => Math.abs(page - currentPage) <= 2)
+                .map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    style={{
+                      backgroundColor: currentPage === page ? "#3c3e45" : "#fff",
+                      color: currentPage === page ? "#fff" : "#000",
+                      fontWeight: currentPage === page ? "bold" : "normal",
+                      margin: currentPage === page ? "5px" : "5px",
+                    }}
+                    className="px-3 py-1 border rounded"
+                  >
+                    {page}
+                  </button>
+                ))}
+
+
+
+              {/* Next Button */}
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                style={{
+                  backgroundColor: "#fff",
+                  border: "1px solid #000 !important",
+                  marginLeft: "5px",
+                  opacity: currentPage === totalPages ? 0.5 : 1,
+                }}
+                className="px-3 py-1 border rounded"
+              >
+                <img src={Right} alt="" width={15} />
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

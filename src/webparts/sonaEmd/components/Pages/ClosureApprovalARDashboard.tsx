@@ -104,11 +104,11 @@ export const ClosureApprovalARDashboard: React.FC<ISonaEmdProps> = (props: ISona
     ].join(",");
 
     // ✅ Only "Pending for Closure Approval"
-   // const filter = `Status eq 'Pending for Closure Approval'`;
+    // const filter = `Status eq 'Pending for Closure Approval'`;
 
     const currentUserId = props.context.pageContext.legacyPageContext.userId;
 
-const filter = `Status eq 'Pending for Closure Approval' and CurrentApproverId eq ${currentUserId}`;
+    const filter = `Status eq 'Pending for Closure Approval' and CurrentApproverId eq ${currentUserId}`;
 
     const parentItems = await spCrudOps.getRootData(
       listName,
@@ -209,129 +209,151 @@ const filter = `Status eq 'Pending for Closure Approval' and CurrentApproverId e
         <div className="left-banner">
           <div className="logo-text">
             <h2>Closure Approval AR Dashboard</h2>
-            {/* <div className="subtitle">Showing: Pending for Closure Approval</div> */}
           </div>
         </div>
       </div>
-
-      {/* Filters (only search; status is locked) */}
-      <div className="filter-section">
-        <div className="filter-left">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="form-control"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          {/* Status dropdown removed intentionally; locked to 'Pending for Closure Approval' */}
-        </div>
+      <div className="col-md-12 px-2 py-2 col-md-12 d-flex justify-content-between align-items-center" style={{ gap: "5px" }}>
+        <input type="text" placeholder="Search by Tender No, Vendor, Amount..."
+          className="form-control" style={{ width: "250px" }}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
+      <main className="Main-Dash mx-2">
+        <div className="overflow-x-auto">
+          <div className="table-vert-scroll">
 
-      {/* Table */}
-      <div className="table-section">
-        <div className="table-vert-scroll">
-          <table className="custom-table">
-            <thead>
-              <tr>
-                <th>EMD Request No.</th>
-                <th>Tender Type</th>
-                <th>Tender No.</th>
-                <th>Customer/Vendor</th>
-                <th>EMD Amount</th>
-                <th>Currency</th>
-                <th>Status</th>
-                <th>View</th>
-              </tr>
-            </thead>
+            <table className="custom-table min-w-full bg-white rounded-2xl shadow-md">
+              <thead
+                style={{ backgroundColor: "#3c3e45" }}
+                className="text-white"
+              >
+                <tr>
+                  <th className="px-4 py-2">EMD Request No.</th>
+                  <th className="px-4 py-2">Tender Type</th>
+                  <th className="px-4 py-2">Tender No.</th>
+                  <th className="px-4 py-2">Customer/Vendor</th>
+                  <th className="px-4 py-2">EMD Amount</th>
+                  <th className="px-4 py-2">Currency</th>
+                  <th className="px-4 py-2">Status</th>
+                  <th className="px-4 py-2">View</th>
 
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan={8} className="text-center">
-                    Loading data...
-                  </td>
                 </tr>
-              ) : paginatedData.length === 0 ? (
-                <tr>
-                  <td colSpan={8} className="text-center">
-                    No records found
-                  </td>
-                </tr>
-              ) : (
-                paginatedData.map((item) => (
-                  <tr key={item.ID}>
-                    {/* If no dedicated EMDRequestNo, fallback to Title/TenderNo/ID */}
-                    <td>{item.Title || item.TenderNo || item.ID}</td>
-                    <td>{item.TenderType?.Title || "-"}</td>
-                    <td>{item.TenderNo || "-"}</td>
-                    <td>{item.VendorName?.Name || "-"}</td>
-                    <td>
-                      {item.EMDAmount
-                        ? toNumeric(item.EMDAmount).toLocaleString("en-IN")
-                        : "-"}
-                    </td>
-                    <td>{item.Currency?.Currency || "-"}</td>
-                    <td>
-                      <span className={`status-badge ${item.Status?.replace(/\s+/g, "-")}`}>
-                        {item.Status || "-"}
-                      </span>
-                    </td>
-                    <td>
-                      {/* Navigate to Closure Request Form using ItemId (same as your other dashboard) */}
-                      <Link
-                        to={{
-                          pathname: "/ViewForm",
-                          search: `?ItemId=${item.ID}`,
-                        }}
-                      >
-                        <img src={View} width={16} alt="View" />
-                      </Link>
-                      <Link
-                        to={{
-                          pathname: "/ARClosureApprovalForm",
-                          search: `?ItemId=${item.ID}`,
-                        }}
-                      >
-                        <img src={Edit} width={16} alt="Edit" />
-                      </Link>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan={8} className="text-center">
+                      Loading data...
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                ) : paginatedData.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="text-center">
+                      No records found
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedData.map((item) => (
+                    <tr key={item.ID}>
+                      {/* If no dedicated EMDRequestNo, fallback to Title/TenderNo/ID */}
+                      <td className="px-4 py-2">{item.Title || item.TenderNo || item.ID}</td>
+                      <td className="px-4 py-2">{item.TenderType?.Title || "-"}</td>
+                      <td className="px-4 py-2">{item.TenderNo || "-"}</td>
+                      <td className="px-4 py-2">{item.VendorName?.Name || "-"}</td>
+                      <td className="px-4 py-2">
+                        {item.EMDAmount
+                          ? toNumeric(item.EMDAmount).toLocaleString("en-IN")
+                          : "-"}
+                      </td>
+                      <td className="px-4 py-2">{item.Currency?.Currency || "-"}</td>
+                      <td className="px-4 py-2">
+                        <span className={`status-badge ${item.Status?.replace(/\s+/g, "-")}`}>
+                          {item.Status || "-"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2">
+                        {/* Navigate to Closure Request Form using ItemId (same as your other dashboard) */}
+                        <Link
+                          to={{
+                            pathname: "/ViewForm",
+                            search: `?ItemId=${item.ID}`,
+                          }}
+                        >
+                          <img src={View} width={16} alt="View" />
+                        </Link>
+                        <Link
+                          to={{
+                            pathname: "/ARClosureApprovalForm",
+                            search: `?ItemId=${item.ID}`,
+                          }}
+                        >
+                          <img src={Edit} width={16} alt="Edit" />
+                        </Link>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
 
-        {/* Pagination */}
-        <div className="pagination">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            <img src={Left} width={14} />
-          </button>
-
-          {Array.from({ length: totalPages }, (_, i) => i + 1)
-            .filter((page) => Math.abs(page - currentPage) <= 2)
-            .map((page) => (
+          {/* Pagination */}
+          <div className="flex justify-center mt-6 overflow-x-auto">
+            <div className="flex space-x-2 flex-nowrap px-4 py-2 bg-#2149d5 rounded shadow" style={{ textAlign: "end" }}>
+              {/* Previous Button */}
               <button
-                key={page}
-                onClick={() => handlePageChange(page)}
-                className={currentPage === page ? "active" : ""}
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                style={{
+                  backgroundColor: "#fff",
+                  border: "1px solid #000 !important",
+                  marginRight: "5px",
+                  opacity: currentPage === 1 ? 0.5 : 1,
+                }}
+                className="px-3 py-1 border rounded"
               >
-                {page}
+                <img src={Left} alt="" width={15} />
               </button>
-            ))}
+              {/* Main Page Numbers */}
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((page) => Math.abs(page - currentPage) <= 2)
+                .map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    style={{
+                      backgroundColor: currentPage === page ? "#3c3e45" : "#fff",
+                      color: currentPage === page ? "#fff" : "#000",
+                      fontWeight: currentPage === page ? "bold" : "normal",
+                      margin: currentPage === page ? "5px" : "5px",
+                    }}
+                    className="px-3 py-1 border rounded"
+                  >
+                    {page}
+                  </button>
+                ))}
 
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages || totalPages === 0}
-          >
-            <img src={Right} width={14} />
-          </button>
+
+
+              {/* Next Button */}
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                style={{
+                  backgroundColor: "#fff",
+                  border: "1px solid #000 !important",
+                  marginLeft: "5px",
+                  opacity: currentPage === totalPages ? 0.5 : 1,
+                }}
+                className="px-3 py-1 border rounded"
+              >
+                <img src={Right} alt="" width={15} />
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

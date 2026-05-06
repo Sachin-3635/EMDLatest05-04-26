@@ -4,6 +4,7 @@ import { ISonaEmdProps } from "../ISonaEmdProps";
 import { useHistory, useLocation } from "react-router-dom";
 import SPCRUDOPS from "../../service/BAL/spcrud";
 import { sp } from "@pnp/sp";
+import logo from "../../assets/sona-comstarlogo.png";
 
 // ---------- UI helpers ----------
 const Section = ({ title, children }: any) => (
@@ -565,7 +566,7 @@ const UTRDetailEntry = (props: ISonaEmdProps) => {
       const rm = matrix.find((x: any) => x.Role === 'RM' || x.Role === 'Reporting Manager');
       if (rm) {
         finalMatrix.push({ ...rm, Seq: seq++ });
-      } 
+      }
 
       // Then HOD
       const hod = matrix.find((x: any) => x.Role === 'HOD' || x.Role === 'Head of Department');
@@ -726,319 +727,314 @@ const UTRDetailEntry = (props: ISonaEmdProps) => {
   };
 
   return (
-    <div className="forex-wrapper">
-      {/* ================= HEADER ================= */}
-      <div className="forex-header">
-        <h2> UTR Detail Entry</h2>
-      </div>
+    <div className='MainUplodForm' style={{ margin: "5px 0px" }}>
+      <div className='row'>
+        <div className='col-md-12'>
+          <div className='Main-Boxpoup'>
+            {/* 🔹 Header */}
+            <div className="bordered">
+              <img src={logo} />
+              <h1>UTR Detail Entry </h1>
+            </div>
+            <div className="emd-hierarchy">
 
-      <div className="forex-card">
-        {/* ================= APPROVAL HIERARCHY ================= */}
-        {/* <div className="emd-hierarchy">
-          <div className="emd-step active-step">{employee.EmployeeName}</div>
+              {/* Initiator */}
+              <div className="emd-step green">{employee.EmployeeName}</div>
 
-          <div className="emd-step" style={{ marginLeft: "30px" }}>{employee.ReportingManager}</div>
+              {approvalMatrix.map((step, index) => {
 
-          <div className="emd-step" style={{ marginLeft: "30px" }}>{employee.HOD}</div>
-        </div> */}
-        <div className="emd-hierarchy">
+                let stepClass = "grey";
 
-          {/* Initiator */}
-          <div className="emd-step green">{employee.EmployeeName}</div>
+                const firstPending = approvalMatrix.findIndex(s => s.Status === "Pending");
 
-          {approvalMatrix.map((step, index) => {
+                if (step.Status === "Approved") {
+                  stepClass = "green";
+                }
+                else if (step.Status === "Rejected") {
+                  stepClass = "red";
+                }
+                else if (index === firstPending) {
+                  stepClass = "orange";
+                }
 
-            let stepClass = "grey";
+                return (
+                  <div key={index} className={`emd-step ${stepClass}`}>
+                    {step.Approver || step.ApproverName}
+                  </div>
+                );
+              })}
 
-            const firstPending = approvalMatrix.findIndex(s => s.Status === "Pending");
-
-            if (step.Status === "Approved") {
-              stepClass = "green";
-            }
-            else if (step.Status === "Rejected") {
-              stepClass = "red";
-            }
-            else if (index === firstPending) {
-              stepClass = "orange";
-            }
-
-            return (
-              <div key={index} className={`emd-step ${stepClass}`}>
-                {step.Approver || step.ApproverName}
+            </div>
+            <div className="heading1" style={{ marginTop: "10px" }}>
+              <label>Requestor Information</label>
+            </div>
+            <div className='main-formcontainer'>
+              <div className='row mb-20'>
+                <div className='col-md-4'>
+                  <label htmlFor="Employee Code" className='font'>Employee Code</label> : &nbsp;&nbsp;
+                  <label className='fonttext'> {employee.EmployeeCode} </label>
+                </div>
+                <div className='col-md-4'>
+                  <label htmlFor="Employee Name" className='font'>Employee Name </label> : &nbsp;&nbsp;
+                  <label className='fonttext'>  {employee.EmployeeName}</label>
+                </div>
+                <div className='col-md-4'>
+                  <label htmlFor="Employee Email" className='font'>Employee Email </label> : &nbsp;&nbsp;
+                  <label className='fonttext'>  {employee.EmployeeEmail}</label>
+                </div>
               </div>
-            );
-          })}
+              <div className='row mb-20'>
+                <div className='col-md-4'>
+                  <label htmlFor="Contact No" className='font'>Contact No</label> : &nbsp;&nbsp;
+                  <label className='fonttext'>  {employee.ContactNo}</label>
+                </div>
+                <div className='col-md-4'>
+                  <label htmlFor="Employee Status" className='font'>Employee Status</label> : &nbsp;&nbsp;
+                  <label className='fonttext'>  {employee.EmployeeStatus}</label>
+                </div>
+                <div className='col-md-4'>
+                  <label htmlFor="Division" className='font'>Division</label> : &nbsp;&nbsp;
+                  <label className='fonttext'>  {employee.Division}</label>
+                </div>
+              </div>
+              <div className='row mb-20'>
+                <div className='col-md-4'>
+                  <label htmlFor="Location" className='font'>Location</label> : &nbsp;&nbsp;
+                  <label className='fonttext'>  {employee.Location}</label>
+                </div>
+                <div className='col-md-4'>
+                  <label htmlFor="RM" className='font'>RM</label> : &nbsp;&nbsp;
+                  <label className='fonttext'>  {employee.ReportingManager}</label>
+                </div>
+                <div className='col-md-4'>
+                  <label htmlFor="HOD" className='font'>HOD</label> : &nbsp;&nbsp;
+                  <label className='fonttext'>  {employee.HOD}</label>
+                </div>
+              </div>
+              <div className='row mb-20'>
+                <div className='col-md-4'>
+                  <label htmlFor="Location" className='font'>Department</label> : &nbsp;&nbsp;
+                  <label className='fonttext'>  {employee.Department}</label>
+                </div>
+              </div>
+            </div>
+            <div className="heading1" style={{ marginTop: "10px" }}>
+              <label>EMD Request Details</label>
+            </div>
+            <div className='main-formcontainer'>
+              <div className='row mb-20'>
+                <div className='col-md-4'>
+                  <label className='font'>Vendor Code </label>
+                  <input value={vendorCode} className='form-control' readOnly />
+                </div>
+                <div className='col-md-4'>
+                  <label className='font'>Vendor Name </label>
+                  <input value={vendorNameTitle} className='form-control' readOnly />
 
-        </div>
+                </div>
+                <div className='col-md-4'>
+                  <label className='font'>Vendor Site </label>.
+                  <input value={vendorSite} readOnly className="form-control" />
+                </div>
+              </div>
+              <div className='row mb-20'>
+                <div className='col-md-4'>
+                  <label className="font">Contract Type </label>
+                  <input value={tenderNo} readOnly className="form-control" />
+                </div>
+                <div className='col-md-4'>
+                  <label className="font">Tender No </label>
+                  <input value={tenderNo} readOnly className="form-control" />
 
-        {/* Requestor Information */}
-        <Section title="Requestor Information">
-          <Grid style={{ marginTop: "20px" }}>
-            <Field label="Employee Code">
-              <input value={employee.EmployeeCode} readOnly />
-            </Field>
-            <Field label="Employee Name">
-              <input value={employee.EmployeeName} readOnly />
-            </Field>
-            <Field label="Division">
-              <input value={employee.Division} readOnly />
-            </Field>
-            <Field label="Location">
-              <input value={employee.Location} readOnly />
-            </Field>
-            <Field label="Reporting Manager">
-              <input value={employee.RM || employee.ReportingManager} readOnly />
-            </Field>
-            <Field label="HOD">
-              <input value={employee.HOD} readOnly />
-            </Field>
-            <Field label="Contact No">
-              <input value={employee.ContactNo} readOnly />
-            </Field>
-            <Field label="Employee Status">
-              <input value={employee.EmployeeStatus} readOnly />
-            </Field>
-            <Field label="Department">
-              <input value={employee.Department} readOnly />
-            </Field>
-            <Field label="Employee Email" full>
-              <input type="email" value={employee.EmployeeEmail} readOnly />
-            </Field>
-          </Grid>
-        </Section>
+                </div>
+                <div className='col-md-4'>
+                  <label className="font">Tender Date </label>
+                  <input type="date" value={tenderDate} readOnly className="form-control" />
+                </div>
+              </div>
+              <div className='row mb-20'>
+                <div className='col-md-4'>
+                  <label className="font">Tender Type </label>
+                  <input value={tenderTypeText} readOnly className="form-control" />
+                </div>
+                <div className='col-md-4'>
+                  <label className="font">Tender Amount </label>
+                  <input value={formatINR(tenderAmount)} readOnly className="form-control" />
+                </div>
+                <div className='col-md-4'>
+                  <label className="font">EMD Amount </label>
+                  <input value={formatINR(emdAmount)} readOnly className="form-control" />
+                </div>
 
-        {/* EMD Request Details */}
-        <Section title="EMD Request Details">
-          <Grid>
-            <Field label="Vendor Code">
-              <input value={vendorCode} readOnly />
-            </Field>
-            <Field label="Vendor Name">
-              <input value={vendorNameTitle} readOnly />
-            </Field>
-            <Field label="Vendor Site">
-              <input value={vendorSite} readOnly />
-            </Field>
+              </div>
 
-            <Field label="Tender No.">
-              <input value={tenderNo} readOnly />
-            </Field>
-            <Field label="Tender Date">
-              <input type="date" value={tenderDate} readOnly />
-            </Field>
-            <Field label="Tender Type">
-              <input value={tenderTypeText} readOnly />
-            </Field>
+              <div className='row mb-20'>
+                <div className='col-md-4'>
+                  <label className="font">Currency </label>
+                  <input value={currencyText} readOnly className="form-control" />
+                </div>
+                <div className='col-md-4'>
+                  <label className="font">Tender Closing Date </label>
+                  <input type="date" value={tenderClosingDate} readOnly className="form-control" />
+                </div>
+                <div className='col-md-4'>
+                  <label className="font">EMD Percentage </label>
+                  <input value={emdPercentage} className="form-control" readOnly />
+                </div>
 
-            <Field label="Tender Amount">
-              <input value={formatINR(tenderAmount)} readOnly />
-            </Field>
-            <Field label="EMD Amount">
-              <input value={formatINR(emdAmount)} readOnly />
-            </Field>
-            <Field label="Currency">
-              <input value={currencyText} readOnly />
-            </Field>
+              </div>
 
-            <Field label="Tender Closing Date">
-              <input type="date" value={tenderClosingDate} readOnly />
-            </Field>
-            <Field label="EMD Percentage">
-              <input value={emdPercentage} readOnly />
-            </Field>
-          </Grid>
-        </Section>
+            </div>
+            <div className="heading1" style={{ marginTop: "10px" }}>
+              <label>Vouching Details</label>
+            </div>
+            <div className='main-formcontainer'>
+              <div className='row mb-20'>
+                <div className='col-md-4'>
+                  <label className='font'>Vouching Date </label>
+                  <input type="date" className='form-control' value={vouchingDate} readOnly />
+                </div>
+                <div className='col-md-4'>
+                  <label className='font'>GL </label>
+                  <input value={glCode} readOnly className='form-control' />
+                </div>
+                <div className='col-md-4'>
+                  <label className='font'>vendor Code </label>
+                  <input value={vendorCode} readOnly className="form-control" />
+                </div>
+              </div>
+              <div className='row mb-20'>
+                <div className='col-md-4'>
+                  <label className="font">voucher No. </label>
+                  <input value={voucherNo} readOnly className="form-control" />
+                </div>
+              </div>
+            </div>
+            <div className="heading1" style={{ marginTop: "10px" }}>
+              <label>Work Flow History</label>
+            </div>
+            <div className='main-formcontainer'>
+              <div className='row mb-20'>
+                <div className='col-md-12'>
+                  <div className="overflow-x-auto">
+                    <table className="custom-table">
+                      <thead>
+                        <tr>
+                          <th className="px-4 py-2">Action By</th>
+                          <th className="px-4 py-2">Action Taken</th>
+                          <th className="px-4 py-2">Date</th>
+                          <th className="px-4 py-2">Comment</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {wfHistory.length > 0 ? (
+                          wfHistory.map((item, index) => {
 
-        {/* Vouching Details (read-only) */}
-        <Section title="Vouching Details">
-          <Grid>
-            <Field label="Vouching Date">
-              <input type="date" value={vouchingDate} readOnly />
-            </Field>
-            <Field label="GL">
-              <input value={glCode} readOnly />
-            </Field>
-            <Field label="Vendor Code">
-              <input value={vendorCode} readOnly />
-            </Field>
-            <Field label="Voucher No.">
-              <input value={voucherNo} readOnly />
-            </Field>
-          </Grid>
-        </Section>
+                            // const formatDate = (date: any) => {
+                            //   if (!date) return "-";
+                            //   const d = new Date(date);
+                            //   return isNaN(d.getTime())
+                            //     ? "-"
+                            //     : d.toLocaleString("en-GB");
+                            // };
 
-        {/* Workflow History */}
-        {/* <Section title="Workflow History">
-          <Grid>
-            <Field label="Vouching Details entered by">
-              <input value="AP Team" readOnly />
-            </Field>
-            <Field label="Action Taken">
-              <input value="Vouching details" readOnly />
-            </Field>
-            <Field label="Action Date">
-              <input value={apActionDate || "-"} readOnly />
-            </Field>
+                            const formatDate = (date: any) => {
+                              if (!date) return "-";
 
-            <Field label="Approval By">
-              <input value="MANAC Team" readOnly />
-            </Field>
-            <Field label="Action Taken">
-              <input value="Approved" readOnly />
-            </Field>
-            <Field label="Action Date">
-              <input value={approverActionDate || "-"} readOnly />
-            </Field>
-          </Grid>
-        </Section> */}
-        <Section title="Workflow History">
+                              // Handle DD/MM/YYYY
+                              const parts = date.split("/");
+                              if (parts.length === 3) {
+                                const [day, month, year] = parts;
+                                const d = new Date(`${year}-${month}-${day}`);
 
-          <div className="wfTableWrapper">
+                                return isNaN(d.getTime())
+                                  ? "-"
+                                  : d.toLocaleDateString("en-GB");
+                              }
 
-            <table className="wfTable">
-              <thead>
-                <tr>
-                  <th>Action By</th>
-                  <th>Action Taken</th>
-                  <th>Date</th>
-                  <th>Comment</th>
-                </tr>
-              </thead>
+                              return "-";
+                            };
 
-              <tbody>
-                {wfHistory.length > 0 ? (
-                  wfHistory.map((item, index) => {
+                            return (
+                              <tr key={index}>
+                                <td className="px-4 py-2">{item.CurrentApprover}</td>
+                                <td className="px-4 py-2">{item.ActionTaken}</td>
+                                <td className="px-4 py-2">{formatDate(item.Date)}</td>
+                                <td className="px-4 py-2">{item.Comment || "-"}</td>
+                              </tr>
+                            );
+                          })
+                        ) : (
+                          <tr>
+                            <td colSpan={4}>No history available</td>
+                          </tr>
+                        )}
+                      </tbody>
 
-                    // const formatDate = (date: any) => {
-                    //   if (!date) return "-";
-                    //   const d = new Date(date);
-                    //   return isNaN(d.getTime())
-                    //     ? "-"
-                    //     : d.toLocaleString("en-GB");
-                    // };
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="heading1" style={{ marginTop: "10px" }}>
+              <label>Action</label>
+            </div>
+            <div className='main-formcontainer'>
+              <div className='row mb-20'>
+                <div className='col-md-4'>
+                  <label className='font'> UTR No. <span className='Mantorystar'>*</span></label>
+                  <input className="form-control" value={utrNo} onChange={(e) => setUTRNo(e.target.value)} placeholder="Enter UTR No." />
+                </div>
+                <div className='col-md-4'>
+                  <label className='font'> UTR Date. <span className='Mantorystar'>*</span></label>
+                  <input type="date" className="form-control" value={utrDate} onChange={(e) => setUTRDate(e.target.value)} />
+                </div>
+                <div className='col-md-4'>
+                  <label className='font'>Comments <span className='Mantorystar'>*</span></label>
+                  <textarea
+                    rows={3}
+                    value={treasuryComment}
+                    onChange={(e) => setTreasuryComment(e.target.value)}
+                    placeholder="Enter comments" className="form-control"
+                  />
+                </div>
+              </div>
 
-                    const formatDate = (date: any) => {
-                      if (!date) return "-";
-
-                      // Handle DD/MM/YYYY
-                      const parts = date.split("/");
-                      if (parts.length === 3) {
-                        const [day, month, year] = parts;
-                        const d = new Date(`${year}-${month}-${day}`);
-
-                        return isNaN(d.getTime())
-                          ? "-"
-                          : d.toLocaleDateString("en-GB");
-                      }
-
-                      return "-";
-                    };
-
-                    return (
-                      <tr key={index}>
-                        <td>{item.CurrentApprover}</td>
-                        <td>{item.ActionTaken}</td>
-                        <td>{formatDate(item.Date)}</td>
-                        <td>{item.Comment || "-"}</td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  <tr>
-                    <td colSpan={4}>No history available</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-
+            </div>
+            <div className="heading1" style={{ marginTop: "10px" }}>
+              <label>Upload Documents</label>
+            </div>
+            <div className='main-formcontainer'>
+              <div className='row mb-20'>
+                <div className='col-md-4'>
+                  <label className='font'> Attach </label>
+                  {attachments.length === 0 ? (
+                    <div>-</div>
+                  ) : (
+                    <ul style={{ margin: 0, paddingLeft: 18 }}>
+                      {attachments.map((a) => (
+                        <li key={a.ServerRelativeUrl}>
+                          <a href={a.ServerRelativeUrl} target="_blank" rel="noreferrer">
+                            {a.FileName}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className='row my-3'>
+              <div className='col-md-12'>
+                <div style={{ display: "flex", justifyContent: "center", gap: "5px" }}>
+                  <button className="submit-btn" disabled={isSaving} onClick={onsubmit}>
+                    {isSaving ? "Saving..." : "Paid"}
+                  </button>
+                  <button className="reset-btn" onClick={() => history.push("/TreasuryLandingPage")}>Exit</button>
+                </div>
+              </div>
+            </div>
           </div>
-
-        </Section>
-
-        {/* Comment History */}
-        {/* <Section title="Comment History">
-          <Grid>
-            <Field label="Comment By">
-              <input value="AP Team" readOnly />
-            </Field>
-            <Field label="Comment">
-              <textarea value={apTeamComment || "-"} readOnly rows={3} />
-            </Field>
-            <Field label="Comment Date">
-              <input value={apActionDate || "-"} readOnly />
-            </Field>
-
-            <Field label="Comment By">
-              <input value="MANAC Team" readOnly />
-            </Field>
-            <Field label="Comment">
-              <textarea value={approverComment || "-"} readOnly rows={3} />
-            </Field>
-            <Field label="Comment Date">
-              <input value={approverActionDate || "-"} readOnly />
-            </Field>
-          </Grid>
-        </Section> */}
-
-        {/* Action (Treasury) */}
-        <Section title="Action">
-          <Grid>
-            <Field
-              // label="UTR No*"
-              label={<>UTR No.<span style={{ color: "red" }}>*</span></>}
-
-            >
-              <input value={utrNo} onChange={(e) => setUTRNo(e.target.value)} placeholder="Enter UTR No." />
-            </Field>
-            <Field
-              // label="UTR Date*"
-              label={<>UTR Date.<span style={{ color: "red" }}>*</span></>}
-            >
-              <input type="date" value={utrDate} onChange={(e) => setUTRDate(e.target.value)} />
-            </Field>
-            <Field
-              // label="Comments*"
-              label={<>Comments.<span style={{ color: "red" }}>*</span></>}
-            >
-              <textarea
-                rows={3}
-                value={treasuryComment}
-                onChange={(e) => setTreasuryComment(e.target.value)}
-                placeholder="Enter comments"
-              />
-            </Field>
-          </Grid>
-        </Section>
-
-        {/*  Uploaded Documents  */}
-        <Section title="Uploaded Documents">
-          <Grid>
-            <Field label="Attach">
-              {attachments.length === 0 ? (
-                <div>-</div>
-              ) : (
-                <ul style={{ margin: 0, paddingLeft: 18 }}>
-                  {attachments.map((a) => (
-                    <li key={a.ServerRelativeUrl}>
-                      <a href={a.ServerRelativeUrl} target="_blank" rel="noreferrer">
-                        {a.FileName}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </Field>
-          </Grid>
-        </Section>
-
-        {/* Buttons */}
-        <div className="button-row">
-          <button className="btn-submit" disabled={isSaving} onClick={onsubmit}>
-            {isSaving ? "Saving..." : "Paid"}
-          </button>
-          <button className="btn-exit" onClick={() => history.push("/TreasuryLandingPage")}>
-            Exit
-          </button>
         </div>
       </div>
     </div>
