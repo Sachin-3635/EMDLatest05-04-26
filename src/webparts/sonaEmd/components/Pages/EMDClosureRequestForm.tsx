@@ -682,9 +682,11 @@ const EMDClosureRequestForm = (props: ISonaEmdProps) => {
               <div className="approvalFlow">
 
                 {/* Initiator */}
-                <div className="flowStep green">
-                  {employee.EmployeeName}
-                </div>
+                <ul >
+                  <li className="flowStep green">
+                  {employee.EmployeeName || "Initiator"}
+                  </li>
+                </ul>
 
                 {approvalMatrix.map((step, index) => {
 
@@ -714,9 +716,11 @@ const EMDClosureRequestForm = (props: ISonaEmdProps) => {
                   }
 
                   return (
-                    <div key={index} className={`flowStep ${stepClass}`}>
-                      {step.Approver || step.ApproverName || step.Role}
-                    </div>
+                    <ul key={index}>
+                      <li className={`flowStep ${stepClass}`}>
+                        {step.Approver || step.ApproverName || step.Role}
+                      </li>
+                    </ul>
                   );
                 })}
 

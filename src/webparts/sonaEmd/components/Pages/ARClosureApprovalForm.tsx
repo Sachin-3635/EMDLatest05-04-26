@@ -878,9 +878,14 @@ const ARClosureApprovalForm = (props: ISonaEmdProps) => {
               <div className="approvalFlow">
 
                 {/* Initiator */}
-                <div className="flowStep green">
+                {/* <div className="flowStep green">
                   {employee.EmployeeName}
-                </div>
+                </div> */}
+                <ul >
+                  <li className="flowStep green">
+                  {employee.EmployeeName || "Initiator"}
+                  </li>
+                </ul>
 
                 {approvalMatrix.map((step, index) => {
 
@@ -899,10 +904,15 @@ const ARClosureApprovalForm = (props: ISonaEmdProps) => {
                   }
 
                   return (
-                    <div key={index} className={`flowStep ${stepClass}`}>
-                      {/* {step.Approver || step.Role} */}
-                      {step.ApproverName || step.ApproverName || step.Approver || step.Role}
-                    </div>
+                    // <div key={index} className={`flowStep ${stepClass}`}>
+                    //   {/* {step.Approver || step.Role} */}
+                    //   {step.ApproverName || step.ApproverName || step.Approver || step.Role}
+                    // </div>
+                    <ul key={index}>
+                      <li className={`flowStep ${stepClass}`}>
+                         {step.ApproverName || step.ApproverName || step.Approver || step.Role}
+                      </li>
+                    </ul>
                   );
                 })}
 

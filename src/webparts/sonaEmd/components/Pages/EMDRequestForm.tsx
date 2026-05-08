@@ -682,9 +682,11 @@ const EMDRequestForm = (props: ISonaEmdProps) => {
               <div className="approvalFlow">
 
                 {/* Initiator */}
-                <div className="flowStep green">
+                <ul >
+                  <li className="flowStep green">
                   {employee.EmployeeName || "Initiator"}
-                </div>
+                  </li>
+                </ul>
 
                 {approverMatrix.map((step, index) => {
 
@@ -703,9 +705,11 @@ const EMDRequestForm = (props: ISonaEmdProps) => {
                   }
 
                   return (
-                    <div key={index} className={`flowStep ${stepClass}`}>
-                      {step.ApproverName}
-                    </div>
+                    <ul key={index}>
+                      <li className={`flowStep ${stepClass}`}>
+                        {step.ApproverName}
+                      </li>
+                    </ul>
                   );
                 })}
 

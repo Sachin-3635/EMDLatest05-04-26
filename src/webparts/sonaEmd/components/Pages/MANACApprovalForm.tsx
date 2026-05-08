@@ -856,9 +856,14 @@ const MANACApprovalForm = (props: ISonaEmdProps) => {
             <div className="emd-hierarchy">
 
               {/* Initiator */}
-              <div className="emd-step active-step">
+              {/* <div className="emd-step active-step">
                 {employee.EmployeeName}
-              </div>
+              </div> */}
+              <ul >
+                  <li className="flowStep green">
+                  {employee.EmployeeName || "Initiator"}
+                  </li>
+                </ul>
 
               {approverMatrix.map((step, index) => {
 
@@ -878,9 +883,14 @@ const MANACApprovalForm = (props: ISonaEmdProps) => {
                 }
 
                 return (
-                  <div key={index} className={stepClass}>
-                    <div>{step.Approver || step.ApproverName}</div>
-                  </div>
+                  // <div key={index} className={stepClass}>
+                  //   <div>{step.Approver || step.ApproverName}</div>
+                  // </div>
+                  <ul key={index}>
+                      <li className={`flowStep ${stepClass}`}>
+                        {step.Approver || step.ApproverName}
+                      </li>
+                    </ul>
                 );
               })}
 

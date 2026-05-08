@@ -674,9 +674,15 @@ const VouchingbyAPTeamForm = (props: ISonaEmdProps) => {
               <div className="approvalFlow">
 
                 {/* Initiator */}
-                <div className="flowStep green">
+                {/* <div className="flowStep green">
                   {employee.EmployeeName || "Initiator"}
-                </div>
+                </div> */}
+                <ul >
+                  <li className="flowStep green">
+                  {employee.EmployeeName || "Initiator"}
+                  </li>
+                </ul>
+
 
                 {approvalMatrix.map((step, index) => {
 
@@ -702,9 +708,14 @@ const VouchingbyAPTeamForm = (props: ISonaEmdProps) => {
                   }
 
                   return (
-                    <div key={index} className={`flowStep ${stepClass}`}>
-                      {step.ApproverName}
-                    </div>
+                    // <div key={index} className={`flowStep ${stepClass}`}>
+                    //   {step.ApproverName}
+                    // </div>
+                    <ul key={index}>
+                      <li className={`flowStep ${stepClass}`}>
+                        {step.ApproverName}
+                      </li>
+                    </ul>
                   );
                 })}
 

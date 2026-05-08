@@ -739,7 +739,12 @@ const UTRDetailEntry = (props: ISonaEmdProps) => {
             <div className="emd-hierarchy">
 
               {/* Initiator */}
-              <div className="emd-step green">{employee.EmployeeName}</div>
+              {/* <div className="emd-step green">{employee.EmployeeName}</div> */}
+              <ul >
+                  <li className="flowStep green">
+                  {employee.EmployeeName || "Initiator"}
+                  </li>
+                </ul>
 
               {approvalMatrix.map((step, index) => {
 
@@ -758,9 +763,14 @@ const UTRDetailEntry = (props: ISonaEmdProps) => {
                 }
 
                 return (
-                  <div key={index} className={`emd-step ${stepClass}`}>
-                    {step.Approver || step.ApproverName}
-                  </div>
+                  // <div key={index} className={`emd-step ${stepClass}`}>
+                  //   {step.Approver || step.ApproverName}
+                  // </div>
+                  <ul key={index}>
+                      <li className={`flowStep ${stepClass}`}>
+                        {step.Approver || step.ApproverName}
+                      </li>
+                    </ul>
                 );
               })}
 
