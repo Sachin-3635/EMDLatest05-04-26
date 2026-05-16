@@ -231,9 +231,10 @@ export const APTeamDashboard: React.FC<ISonaEmdProps> = (props: ISonaEmdProps) =
                       <td className="px-4 py-2">{item.EMDAmount ? `₹ ${formatAmount(item.EMDAmount)}` : "-"}</td>
                       <td className="px-4 py-2">{item.Currency?.Currency || "-"}</td>
                       <td className="px-4 py-2">
-                        <span className={getStatusClass(item.Status)}>
+                        {item.Status || "-"}
+                        {/* <span className={getStatusClass(item.Status)}>
                           {item.Status || "-"}
-                        </span>
+                        </span> */}
                       </td>
                       <td className="px-4 py-2">
                         {/* If AP team needs to edit/voucher, switch to your AP form route: */}

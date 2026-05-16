@@ -716,51 +716,52 @@ const ViewForm = (props: ISonaEmdProps) => {
                             <h1>View Details</h1>
                             {title ? <div style={{ marginTop: 4, color: "#666" }}>Ref: {title}</div> : null}
                         </div>
-                        <div className="headerApproval">
-                            <div className="approvalFlow">
+                        <div className="approvalFlow">
 
-                                {/* Initiator */}
-                                <div className="flowStep green">Initiator</div>
+                            {/* Initiator */}
+                            <ul >
+                                <li className="flowStep green">
+                                    Initiator
+                                </li>
+                            </ul>
 
-                                {approvalMatrix.map((step, index) => {
+                            {approvalMatrix.map((step, index) => {
 
-                                    let stepClass = "grey";
+                                let stepClass = "grey";
 
-                                    const firstPending = approvalMatrix.findIndex(s => s.Status === "Pending");
-                                    const isLastStep = index === approvalMatrix.length - 1;
+                                const firstPending = approvalMatrix.findIndex(s => s.Status === "Pending");
+                                const isLastStep = index === approvalMatrix.length - 1;
 
-                                    // 🔴 Rejected
-                                    if (step.Status === "Rejected") {
-                                        stepClass = "red";
-                                    }
+                                // 🔴 Rejected
+                                if (step.Status === "Rejected") {
+                                    stepClass = "red";
+                                }
 
-                                    // 🟢 Approved
-                                    else if (step.Status === "Approved") {
-                                        stepClass = "green";
-                                    }
+                                // 🟢 Approved
+                                else if (step.Status === "Approved") {
+                                    stepClass = "green";
+                                }
 
-                                    // 🟢 Last Accepted
-                                    else if (isLastStep && step.Status === "Accepted") {
-                                        stepClass = "green";
-                                    }
+                                // 🟢 Last Accepted
+                                else if (isLastStep && step.Status === "Accepted") {
+                                    stepClass = "green";
+                                }
 
-                                    // 🟠 Current Pending
-                                    else if (index === firstPending) {
-                                        stepClass = "orange";
-                                    }
+                                // 🟠 Current Pending
+                                else if (index === firstPending) {
+                                    stepClass = "orange";
+                                }
 
-                                    return (
-                                        <div key={index} className={`flowStep ${stepClass}`}>
-                                            {/* 🔥 SHOW NAME INSTEAD OF ROLE */}
+                                return (
 
-                                            {/* {step.ApproverName} */}
-                                            {/* {step.Approver || step.Role} */}
+                                    <ul key={index}>
+                                        <li className={`flowStep ${stepClass}`}>
                                             {step.ApproverName || step.ApproverName || step.Approver || step.Role}
-                                        </div>
-                                    );
-                                })}
+                                        </li>
+                                    </ul>
+                                );
+                            })}
 
-                            </div>
                         </div>
                         <div className="heading1" style={{ marginTop: "10px" }}>
                             <label>Requestor Information</label>

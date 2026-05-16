@@ -300,9 +300,10 @@ export const MyRequests: React.FC<ISonaEmdProps> = (props: ISonaEmdProps) => {
                       <td className="px-4 py-2">{item?.Currency?.Currency ?? "-"}</td>
                       {/* <td className="px-4 py-2">{formatDate(item?.TenderClosingDate)}</td> */}
                       <td className="px-4 py-2">
-                        <span className={getStatusClass(item?.Status)}>
-                          {item?.Status || "Pending for Approval"}
-                        </span>
+                        {item?.Status || "Pending for Approval"}
+                        {/* <span className={getStatusClass(item?.Status)}>
+
+                        </span> */}
                       </td>
                       <td className="px-4 py-2">
                         {/*  Use real Id here so EMDRequestFormView can prefill */}
@@ -357,7 +358,7 @@ export const MyRequests: React.FC<ISonaEmdProps> = (props: ISonaEmdProps) => {
                   </button>
                 ))}
 
-                
+
 
               {/* Next Button */}
               <button
@@ -379,7 +380,7 @@ export const MyRequests: React.FC<ISonaEmdProps> = (props: ISonaEmdProps) => {
       </main>
 
 
-      
+
     </div>
   );
 };

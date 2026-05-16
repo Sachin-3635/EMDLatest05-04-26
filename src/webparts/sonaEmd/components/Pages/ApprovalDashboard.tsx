@@ -246,7 +246,6 @@ export const ApprovalDashboard: React.FC<ISonaEmdProps> = (props: ISonaEmdProps)
                   <th className="px-4 py-2">Tender No.</th>
                   <th className="px-4 py-2">Tender Type</th>
                   <th className="px-4 py-2">Customer/Vendor</th>
-                  <th className="px-4 py-2">Employee Name</th>
                   <th className="px-4 py-2">EMD Amount</th>
                   <th className="px-4 py-2">Currency</th>
                   <th className="px-4 py-2">Status</th>
@@ -273,9 +272,10 @@ export const ApprovalDashboard: React.FC<ISonaEmdProps> = (props: ISonaEmdProps)
                       <td className="px-4 py-2">{item.EMDAmount ? `₹ ${formatAmount(item.EMDAmount)}` : "-"}</td>
                       <td className="px-4 py-2">{item.Currency?.Currency || "-"}</td>
                       <td className="px-4 py-2">
-                        <span className={getStatusClass(item.Status)}>
+                        {item.Status || "Pending for Approval"}
+                        {/* <span className={getStatusClass(item.Status)}>
                           {item.Status || "Pending for Approval"}
-                        </span>
+                        </span> */}
                       </td>
                       <td className="px-4 py-2">
                         <Link to={`/ViewForm?ItemId=${item.Id}`}>

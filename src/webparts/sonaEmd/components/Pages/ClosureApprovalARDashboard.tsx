@@ -268,9 +268,10 @@ export const ClosureApprovalARDashboard: React.FC<ISonaEmdProps> = (props: ISona
                       </td>
                       <td className="px-4 py-2">{item.Currency?.Currency || "-"}</td>
                       <td className="px-4 py-2">
-                        <span className={`status-badge ${item.Status?.replace(/\s+/g, "-")}`}>
+                        {item.Status || "-"}
+                        {/* <span className={`status-badge ${item.Status?.replace(/\s+/g, "-")}`}>
                           {item.Status || "-"}
-                        </span>
+                        </span> */}
                       </td>
                       <td className="px-4 py-2">
                         {/* Navigate to Closure Request Form using ItemId (same as your other dashboard) */}

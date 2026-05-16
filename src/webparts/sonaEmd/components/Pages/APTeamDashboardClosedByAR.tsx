@@ -232,9 +232,10 @@ export const APTeamDashboardClosedByAR: React.FC<ISonaEmdProps> = (props: ISonaE
                       <td className="px-4 py-2">{item.EMDAmount ? `₹ ${formatAmount(item.EMDAmount)}` : "-"}</td>
                       <td className="px-4 py-2">{item.Currency?.Currency || "-"}</td>
                       <td className="px-4 py-2">
-                        <span className={getStatusClass(item.Status)}>
+                        {item.Status || "-"}
+                        {/* <span className={getStatusClass(item.Status)}>
                           {item.Status || "-"}
-                        </span>
+                        </span> */}
                       </td>
                       <td className="px-4 py-2">
                         {/* Route ko aap apne AP/Approval flow ke mutabik change kar sakte ho */}

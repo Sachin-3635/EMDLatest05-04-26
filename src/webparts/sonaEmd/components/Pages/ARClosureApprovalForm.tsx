@@ -1098,7 +1098,7 @@ const ARClosureApprovalForm = (props: ISonaEmdProps) => {
               <div className='row mb-20'>
                 <div className='col-md-4'>
                   <label className='font'>UTR No </label>
-                  <input type="date" className='form-control' value={utrNo} readOnly />
+                  <input type="text" className='form-control' value={utrNo} readOnly />
                 </div>
                 <div className='col-md-4'>
                   <label className='font'>UTR Date </label>
@@ -1117,11 +1117,11 @@ const ARClosureApprovalForm = (props: ISonaEmdProps) => {
                 </div>
                 <div className='col-md-4'>
                   <label className='font'>Bank Account <span className="Mantorystar">*</span> </label>
-                  <input type="date" value={bankAccount} readOnly className='form-control' />
+                  <input  value={bankAccount} readOnly className='form-control' />
                 </div>
                 <div className='col-md-4'>
                   <label className='font'>Amount <span className="Mantorystar">*</span> </label>
-                  <input type="date" value={closureAmount} readOnly className='form-control' />
+                  <input  value={closureAmount} readOnly className='form-control' />
                 </div>
                 <div className='row mb-20'>
                   <div className='col-md-4'>

@@ -226,7 +226,7 @@ const ClosureRequestForm = (props: ISonaEmdProps) => {
             "VendorCode,VendorSite," +
             "TenderNo,TenderDate,TenderAmount,EMDAmount,EMDPercentage,TenderClosingDate," +
             "TenderTypeId,TenderType/TenderType," +
-            "VendorNameId,VendorName/Title," +
+            "VendorNameId,VendorName/Title,VendorName/Name" +
             "CurrencyId,Currency/Currency," +
             "VouchingDate,GLCode,VoucherNo,APTeamComment," +
             "ApproverComment," +
@@ -279,7 +279,8 @@ const ClosureRequestForm = (props: ISonaEmdProps) => {
                     "EMDPercentage",
                     "TenderClosingDate",
                     "TenderTypeId",
-                    "VendorNameId",
+                    "VendorName/Id",
+                    "VendorName/Name",
                     "CurrencyId",
                     "VouchingDate",
                     "GLCode",

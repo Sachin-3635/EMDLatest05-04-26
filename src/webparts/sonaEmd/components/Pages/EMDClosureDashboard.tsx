@@ -66,7 +66,7 @@ export const EMDClosureDashboard: React.FC<ISonaEmdProps> = (props: ISonaEmdProp
       "VendorCode",
       "VendorSite",
       "TenderType/Id",
-      "TenderType/Title",
+      "TenderType/TenderType",
       "TenderNo",
       "TenderDate",
       "TenderAmount",
@@ -158,7 +158,7 @@ export const EMDClosureDashboard: React.FC<ISonaEmdProps> = (props: ISonaEmdProp
           item.VendorName?.Title,
           item.VendorCode,
           item.VendorSite,
-          item.TenderType?.Title,
+          item.TenderType?.TenderType,
           item.TenderNo,
           item.TenderDate ? formatDate(item.TenderDate) : "",
           item.TenderAmount,
@@ -266,7 +266,8 @@ export const EMDClosureDashboard: React.FC<ISonaEmdProps> = (props: ISonaEmdProp
                     <tr key={item.ID}>
                       {/* Using Title or TenderNo or fallback to ID */}
                       <td className="px-4 py-2">{item.Title || item.TenderNo || item.ID}</td>
-                      <td className="px-4 py-2">{item.TenderType?.Title || "-"}</td>
+                      <td className="px-4 py-2">{item?.TenderType?.TenderType ?? "-"}</td>
+                      {/* <td className="px-4 py-2">{item.TenderType?.Title || "-"}</td> */}
                       <td className="px-4 py-2">{item.TenderNo || "-"}</td>
                       <td className="px-4 py-2">{item.VendorName?.Name || "-"}</td>
                       <td className="px-4 py-2">
