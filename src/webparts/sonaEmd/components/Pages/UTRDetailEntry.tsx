@@ -736,7 +736,7 @@ const UTRDetailEntry = (props: ISonaEmdProps) => {
               <img src={logo} />
               <h1>UTR Detail Entry </h1>
             </div>
-            <div className="emd-hierarchy">
+            <div className="approvalFlow">
 
               {/* Initiator */}
               {/* <div className="emd-step green">{employee.EmployeeName}</div> */}

@@ -203,6 +203,7 @@ export const APTeamDashboardClosedByAR: React.FC<ISonaEmdProps> = (props: ISonaE
                 className="text-white"
               >
                 <tr>
+                  <th className="px-4 py-2">Action</th>
                   <th className="px-4 py-2">EMD Request No.</th>
                   <th className="px-4 py-2">Tender Type</th>
                   <th className="px-4 py-2">Tender No.</th>
@@ -210,7 +211,6 @@ export const APTeamDashboardClosedByAR: React.FC<ISonaEmdProps> = (props: ISonaE
                   <th className="px-4 py-2">EMD Amount</th>
                   <th className="px-4 py-2">Currency</th>
                   <th className="px-4 py-2">Status</th>
-                  <th className="px-4 py-2">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -225,18 +225,6 @@ export const APTeamDashboardClosedByAR: React.FC<ISonaEmdProps> = (props: ISonaE
                 ) : (
                   paginatedData.map((item) => (
                     <tr key={item.Id}>
-                      <td className="px-4 py-2">{item.Title || "-"}</td>
-                      <td className="px-4 py-2">{item.TenderType?.TenderType || "-"}</td>
-                      <td className="px-4 py-2">{item.TenderNo || "-"}</td>
-                      <td className="px-4 py-2">{item.VendorName?.Name || "-"}</td>
-                      <td className="px-4 py-2">{item.EMDAmount ? `₹ ${formatAmount(item.EMDAmount)}` : "-"}</td>
-                      <td className="px-4 py-2">{item.Currency?.Currency || "-"}</td>
-                      <td className="px-4 py-2">
-                        {item.Status || "-"}
-                        {/* <span className={getStatusClass(item.Status)}>
-                          {item.Status || "-"}
-                        </span> */}
-                      </td>
                       <td className="px-4 py-2">
                         {/* Route ko aap apne AP/Approval flow ke mutabik change kar sakte ho */}
                         {/* Example: AR Closure Approval Form (read-only/approval) */}
@@ -252,6 +240,19 @@ export const APTeamDashboardClosedByAR: React.FC<ISonaEmdProps> = (props: ISonaE
                         <img src={Edit} width={16} alt="Edit" />
                       </Link> */}
                       </td>
+                      <td className="px-4 py-2">{item.Title || "-"}</td>
+                      <td className="px-4 py-2">{item.TenderType?.TenderType || "-"}</td>
+                      <td className="px-4 py-2">{item.TenderNo || "-"}</td>
+                      <td className="px-4 py-2">{item.VendorName?.Name || "-"}</td>
+                      <td className="px-4 py-2">{item.EMDAmount ? `₹ ${formatAmount(item.EMDAmount)}` : "-"}</td>
+                      <td className="px-4 py-2">{item.Currency?.Currency || "-"}</td>
+                      <td className="px-4 py-2">
+                        {item.Status || "-"}
+                        {/* <span className={getStatusClass(item.Status)}>
+                          {item.Status || "-"}
+                        </span> */}
+                      </td>
+
                     </tr>
                   ))
                 )}
@@ -316,7 +317,7 @@ export const APTeamDashboardClosedByAR: React.FC<ISonaEmdProps> = (props: ISonaE
         </div>
       </main>
 
-      
+
     </div>
   );
 };

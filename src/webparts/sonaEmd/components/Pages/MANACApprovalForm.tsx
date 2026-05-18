@@ -841,7 +841,7 @@ const MANACApprovalForm = (props: ISonaEmdProps) => {
               <img src={logo} />
               <h1>Approval Form </h1>
             </div>
-            {(title || status) ? (
+            {/* {(title || status) ? (
               <Section title="Request Summary">
                 <Grid>
                   <Field label="EMD Request No.">
@@ -852,8 +852,8 @@ const MANACApprovalForm = (props: ISonaEmdProps) => {
                   </Field>
                 </Grid>
               </Section>
-            ) : null}
-            <div className="emd-hierarchy">
+            ) : null} */}
+            <div className="approvalFlow">
 
               {/* Initiator */}
               {/* <div className="emd-step active-step">
@@ -965,11 +965,11 @@ const MANACApprovalForm = (props: ISonaEmdProps) => {
                   <div className='col-md-4'>
                     <label className='font'>Vendor Code </label>
                     <Dropdown
-                      className='formtext-control'
+                      className='formtext-control readonly'
                       defaultValue={"All Selected"}
                       options={vendorCodeOptions}
                       selectedKey={vendorCodeKey}
-                      disabled
+                      
                       onChange={(e, option) => {
                         if (option) {
                           setVendorCodeKey(option.key as number);
@@ -981,17 +981,17 @@ const MANACApprovalForm = (props: ISonaEmdProps) => {
                   <div className='col-md-4'>
                     <label className='font'>Vendor Name </label>
                     <Dropdown
-                      className='formtext-control'
+                      className='formtext-control readonly'
                       options={vendorNameOptions}
                       selectedKey={vendorName}
                       onChange={(e, option) => option && setVendorName(option.key as number)}
-                      disabled
+                      
                     />
                   </div>
                   <div className='col-md-4'>
                     <label className='font'>Vendor Site </label>
                     <Dropdown
-                      className='formtext-control'
+                      className='formtext-control readonly'
                       options={vendorSiteOptions}
                       selectedKey={vendorSiteKey}
                       onChange={(e, option) => {
@@ -1000,7 +1000,7 @@ const MANACApprovalForm = (props: ISonaEmdProps) => {
                           setVendorSite(option.text);
                         }
                       }}
-                      disabled
+                      
                     />
                   </div>
                 </div>
@@ -1042,11 +1042,10 @@ const MANACApprovalForm = (props: ISonaEmdProps) => {
                   <div className='col-md-4'>
                     <label className="font">Currency </label>
                     <Dropdown
-                      className='formtext-control'
+                      className='formtext-control readonly'
                       options={currencyOptions}
                       selectedKey={currency}
                       onChange={(e, option) => option && setCurrency(option.key as number)}
-                      disabled
                     />
                   </div>
                   <div className='row mb-20'>
@@ -1061,11 +1060,11 @@ const MANACApprovalForm = (props: ISonaEmdProps) => {
                     <div className='col-md-4'>
                       <label className="font">Mode of Payment </label>
                       <Dropdown
-                        className='formtext-control'
+                        className='formtext-control readonly'
                         options={modeOfPaymentOptions}
                         selectedKey={modeOfPayment}
                         onChange={(e, option) => option && setModeOfPayment(option.key as number)}
-                        disabled
+                        
                       />
                     </div>
                   </div>
@@ -1073,11 +1072,11 @@ const MANACApprovalForm = (props: ISonaEmdProps) => {
                     <div className='col-md-4'>
                       <label className="font">Product Type </label>
                       <Dropdown
-                        className='formtext-control'
+                        className='formtext-control readonly'
                         options={productTypeOptions}
                         selectedKey={productType}
                         onChange={(e, option) => option && setProductType(option.key as number)}
-                        disabled
+                        
                       />
                     </div>
                   </div>
@@ -1200,7 +1199,7 @@ const MANACApprovalForm = (props: ISonaEmdProps) => {
                     <button onClick={handleApprove} disabled={actionLoading} className="submit-btn">
                       {actionLoading ? "Approving..." : "Approve"}
                     </button>
-                    <button className="Rework-btn" onClick={handleReject} disabled={actionLoading}>
+                    <button className="reject-btn" onClick={handleReject} disabled={actionLoading}>
                       {actionLoading ? "Updating..." : "Reject"}
                     </button>
                     <a className="reset-btn" onClick={() => history.push("/ApprovalDashboard")}>

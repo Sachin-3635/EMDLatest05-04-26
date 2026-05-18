@@ -874,363 +874,363 @@ const ARClosureApprovalForm = (props: ISonaEmdProps) => {
                 </div>
               ) : null}
             </div>
-            <div className="headerApproval">
-              <div className="approvalFlow">
+            <div className="approvalFlow">
 
-                {/* Initiator */}
-                {/* <div className="flowStep green">
+              {/* Initiator */}
+              {/* <div className="flowStep green">
                   {employee.EmployeeName}
                 </div> */}
-                <ul >
-                  <li className="flowStep green">
+              <ul >
+                <li className="flowStep green">
                   {employee.EmployeeName || "Initiator"}
-                  </li>
-                </ul>
+                </li>
+              </ul>
 
-                {approvalMatrix.map((step, index) => {
+              {approvalMatrix.map((step, index) => {
 
-                  let stepClass = "grey";
+                let stepClass = "grey";
 
-                  const firstPending = approvalMatrix.findIndex(s => s.Status === "Pending");
+                const firstPending = approvalMatrix.findIndex(s => s.Status === "Pending");
 
-                  if (step.Status === "Approved") {
-                    stepClass = "green";
-                  }
-                  else if (step.Status === "Rejected") {
-                    stepClass = "red";
-                  }
-                  else if (index === firstPending) {
-                    stepClass = "orange"; // current step
-                  }
+                if (step.Status === "Approved") {
+                  stepClass = "green";
+                }
+                else if (step.Status === "Rejected") {
+                  stepClass = "red";
+                }
+                else if (index === firstPending) {
+                  stepClass = "orange"; // current step
+                }
 
-                  return (
-                    // <div key={index} className={`flowStep ${stepClass}`}>
-                    //   {/* {step.Approver || step.Role} */}
-                    //   {step.ApproverName || step.ApproverName || step.Approver || step.Role}
-                    // </div>
-                    <ul key={index}>
-                      <li className={`flowStep ${stepClass}`}>
-                         {step.ApproverName || step.ApproverName || step.Approver || step.Role}
-                      </li>
-                    </ul>
-                  );
-                })}
+                return (
+                  // <div key={index} className={`flowStep ${stepClass}`}>
+                  //   {/* {step.Approver || step.Role} */}
+                  //   {step.ApproverName || step.ApproverName || step.Approver || step.Role}
+                  // </div>
+                  <ul key={index}>
+                    <li className={`flowStep ${stepClass}`}>
+                      {step.ApproverName || step.ApproverName || step.Approver || step.Role}
+                    </li>
+                  </ul>
+                );
+              })}
 
-              </div>
             </div>
-            <div className="heading1" style={{ marginTop: "10px" }}>
-              <label>Requestor Information</label>
-            </div>
-            <div className='main-formcontainer'>
-              <div className='row mb-20'>
-                <div className='col-md-4'>
-                  <label htmlFor="Employee Code" className='font'>Employee Code</label> : &nbsp;&nbsp;
-                  <label className='fonttext'> {employee.EmployeeCode} </label>
-                </div>
-                <div className='col-md-4'>
-                  <label htmlFor="Employee Name" className='font'>Employee Name </label> : &nbsp;&nbsp;
-                  <label className='fonttext'>  {employee.EmployeeName}</label>
-                </div>
-                <div className='col-md-4'>
-                  <label htmlFor="Employee Email" className='font'>Employee Email </label> : &nbsp;&nbsp;
-                  <label className='fonttext'>  {employee.EmployeeEmail}</label>
-                </div>
+            <div className="borderedbox">
+              <div className="heading1" style={{ marginTop: "10px" }}>
+                <label>Requestor Information</label>
               </div>
-              <div className='row mb-20'>
-                <div className='col-md-4'>
-                  <label htmlFor="Contact No" className='font'>Contact No</label> : &nbsp;&nbsp;
-                  <label className='fonttext'>  {employee.ContactNo}</label>
-                </div>
-                <div className='col-md-4'>
-                  <label htmlFor="Employee Status" className='font'>Employee Status</label> : &nbsp;&nbsp;
-                  <label className='fonttext'>  {employee.EmployeeStatus}</label>
-                </div>
-                <div className='col-md-4'>
-                  <label htmlFor="Division" className='font'>Division</label> : &nbsp;&nbsp;
-                  <label className='fonttext'>  {employee.Division}</label>
-                </div>
-              </div>
-              <div className='row mb-20'>
-                <div className='col-md-4'>
-                  <label htmlFor="Location" className='font'>Location</label> : &nbsp;&nbsp;
-                  <label className='fonttext'>  {employee.Location}</label>
-                </div>
-                <div className='col-md-4'>
-                  <label htmlFor="RM" className='font'>RM</label> : &nbsp;&nbsp;
-                  <label className='fonttext'>  {employee.ReportingManager}</label>
-                </div>
-                <div className='col-md-4'>
-                  <label htmlFor="HOD" className='font'>HOD</label> : &nbsp;&nbsp;
-                  <label className='fonttext'>  {employee.HOD}</label>
-                </div>
-              </div>
-              <div className='row mb-20'>
-                <div className='col-md-4'>
-                  <label htmlFor="Location" className='font'>Department</label> : &nbsp;&nbsp;
-                  <label className='fonttext'>  {employee.Department}</label>
-                </div>
-              </div>
-            </div>
-            {isTenderDuplicate && (
-              <section>
-                <h5 style={{ color: "green" }}>
-                  This Tender No. is available with another EMD request.
-                </h5>
-              </section>
-            )}
-            <div className="heading1" style={{ marginTop: "10px" }}>
-              <label>EMD Request Details</label>
-            </div>
-            <div className='main-formcontainer'>
-              <div className='row mb-20'>
-                <div className='col-md-4'>
-                  <label className='font'>Vendor Code </label>
-                  <input value={vendorCode} className='form-control' readOnly />
-                </div>
-                <div className='col-md-4'>
-                  <label className='font'>Vendor Name </label>
-                  <input value={vendorNameTitle} className='form-control' readOnly />
-
-                </div>
-                <div className='col-md-4'>
-                  <label className='font'>Vendor Site </label>.
-                  <input value={vendorSite} readOnly className="form-control" />
-                </div>
-              </div>
-              <div className='row mb-20'>
-                {/* <div className='col-md-4'>
-                                    <label className="font">Contract Type </label>
-                                    <input value={tenderNo} readOnly className="form-control" />
-                                </div> */}
-                <div className='col-md-4'>
-                  <label className="font">Tender No </label>
-                  <input value={tenderNo} readOnly className="form-control" />
-
-                </div>
-                <div className='col-md-4'>
-                  <label className="font">Tender Date </label>
-                  <input type="date" value={tenderDate} readOnly className="form-control" />
-                </div>
-              </div>
-              <div className='row mb-20'>
-                <div className='col-md-4'>
-                  <label className="font">Tender Type </label>
-                  <input value={tenderTypeText} readOnly className="form-control" />
-                </div>
-                <div className='col-md-4'>
-                  <label className="font">Tender Amount </label>
-                  <input value={formatINR(tenderAmount)} readOnly className="form-control" />
-                </div>
-                <div className='col-md-4'>
-                  <label className="font">EMD Amount </label>
-                  <input value={formatINR(emdAmount)} readOnly className="form-control" />
-                </div>
-
-              </div>
-              <div className='row mb-20'>
-                <div className='col-md-4'>
-                  <label className="font">Currency </label>
-                  <input value={currencyText} readOnly className="form-control" />
-                </div>
-                <div className='col-md-4'>
-                  <label className="font">Tender Closing Date </label>
-                  <input type="date" value={tenderClosingDate} readOnly className="form-control" />
-                </div>
-                <div className='col-md-4'>
-                  <label className="font">EMD Percentage </label>
-                  <input value={emdPercentage} className="form-control" readOnly />
-                </div>
-
-              </div>
-            </div>
-            <div className="heading1" style={{ marginTop: "10px" }}>
-              <label>Upload Documents</label>
-            </div>
-            <div className='main-formcontainer'>
-              <div className='row mb-20'>
-                <div className='col-md-4'>
-                  <label className='font'> Existing Attachments </label>
-                  {attachments.length === 0 ? (
-                    <div>-</div>
-                  ) : (
-                    <ul style={{ margin: 0, paddingLeft: 18 }}>
-                      {attachments.map((a) => (
-                        <li key={a.ServerRelativeUrl}>
-                          <a href={a.ServerRelativeUrl} target="_blank" rel="noreferrer">
-                            {a.FileName}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className="heading1" style={{ marginTop: "10px" }}>
-              <label>Vouching Details</label>
-            </div>
-            <div className='main-formcontainer'>
-              <div className='row mb-20'>
-                <div className='col-md-4'>
-                  <label className='font'>Vouching Date </label>
-                  <input type="date" className='form-control' value={vouchingDate} readOnly />
-                </div>
-                <div className='col-md-4'>
-                  <label className='font'>GL </label>
-                  <input value={glCode} readOnly className='form-control' />
-                </div>
-                <div className='col-md-4'>
-                  <label className='font'>vendor Code </label>
-                  <input value={vendorCode} readOnly className="form-control" />
-                </div>
-              </div>
-              <div className='row mb-20'>
-                <div className='col-md-4'>
-                  <label className="font">voucher No. </label>
-                  <input value={voucherNo} readOnly className="form-control" />
-                </div>
-              </div>
-            </div>
-            <div className="heading1" style={{ marginTop: "10px" }}>
-              <label>UTR Details</label>
-            </div>
-            <div className='main-formcontainer'>
-              <div className='row mb-20'>
-                <div className='col-md-4'>
-                  <label className='font'>UTR No </label>
-                  <input type="text" className='form-control' value={utrNo} readOnly />
-                </div>
-                <div className='col-md-4'>
-                  <label className='font'>UTR Date </label>
-                  <input type="date" value={utrDate} readOnly className='form-control' />
-                </div>
-              </div>
-            </div>
-            <div className="heading1" style={{ marginTop: "10px" }}>
-              <label>Closure Details</label>
-            </div>
-            <div className='main-formcontainer'>
-              <div className='row mb-20'>
-                <div className='col-md-4'>
-                  <label className='font'>Date of Receipt <span className="Mantorystar">*</span> </label>
-                  <input type="date" className='form-control' value={dateOfReceipt} readOnly />
-                </div>
-                <div className='col-md-4'>
-                  <label className='font'>Bank Account <span className="Mantorystar">*</span> </label>
-                  <input  value={bankAccount} readOnly className='form-control' />
-                </div>
-                <div className='col-md-4'>
-                  <label className='font'>Amount <span className="Mantorystar">*</span> </label>
-                  <input  value={closureAmount} readOnly className='form-control' />
+              <div className='main-formcontainer'>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label htmlFor="Employee Code" className='font'>Employee Code</label> : &nbsp;&nbsp;
+                    <label className='fonttext'> {employee.EmployeeCode} </label>
+                  </div>
+                  <div className='col-md-4'>
+                    <label htmlFor="Employee Name" className='font'>Employee Name </label> : &nbsp;&nbsp;
+                    <label className='fonttext'>  {employee.EmployeeName}</label>
+                  </div>
+                  <div className='col-md-4'>
+                    <label htmlFor="Employee Email" className='font'>Employee Email </label> : &nbsp;&nbsp;
+                    <label className='fonttext'>  {employee.EmployeeEmail}</label>
+                  </div>
                 </div>
                 <div className='row mb-20'>
                   <div className='col-md-4'>
-                    <label className='font'>Comments <span className="Mantorystar">*</span> </label>
-                    <textarea rows={3} value={closureComments} readOnly className='form-control' />
+                    <label htmlFor="Contact No" className='font'>Contact No</label> : &nbsp;&nbsp;
+                    <label className='fonttext'>  {employee.ContactNo}</label>
+                  </div>
+                  <div className='col-md-4'>
+                    <label htmlFor="Employee Status" className='font'>Employee Status</label> : &nbsp;&nbsp;
+                    <label className='fonttext'>  {employee.EmployeeStatus}</label>
+                  </div>
+                  <div className='col-md-4'>
+                    <label htmlFor="Division" className='font'>Division</label> : &nbsp;&nbsp;
+                    <label className='fonttext'>  {employee.Division}</label>
+                  </div>
+                </div>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label htmlFor="Location" className='font'>Location</label> : &nbsp;&nbsp;
+                    <label className='fonttext'>  {employee.Location}</label>
+                  </div>
+                  <div className='col-md-4'>
+                    <label htmlFor="RM" className='font'>RM</label> : &nbsp;&nbsp;
+                    <label className='fonttext'>  {employee.ReportingManager}</label>
+                  </div>
+                  <div className='col-md-4'>
+                    <label htmlFor="HOD" className='font'>HOD</label> : &nbsp;&nbsp;
+                    <label className='fonttext'>  {employee.HOD}</label>
+                  </div>
+                </div>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label htmlFor="Location" className='font'>Department</label> : &nbsp;&nbsp;
+                    <label className='fonttext'>  {employee.Department}</label>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="heading1" style={{ marginTop: "10px" }}>
-              <label>Work Flow History</label>
-            </div>
-            <div className='main-formcontainer'>
-              <div className='row mb-20'>
-                <div className='col-md-12'>
-                  <div className="overflow-x-auto">
-                    <table className="custom-table">
-                      <thead>
-                        <tr>
-                          <th className="px-4 py-2">Action By</th>
-                          <th className="px-4 py-2">Action Taken</th>
-                          <th className="px-4 py-2">Date</th>
-                          <th className="px-4 py-2">Comment</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {wfHistory.length > 0 ? (
-                          wfHistory.map((item, index) => {
+              {isTenderDuplicate && (
+                <section>
+                  <h5 style={{ color: "green" }}>
+                    This Tender No. is available with another EMD request.
+                  </h5>
+                </section>
+              )}
+              <div className="heading1" style={{ marginTop: "10px" }}>
+                <label>EMD Request Details</label>
+              </div>
+              <div className='main-formcontainer'>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label className='font'>Vendor Code </label>
+                    <input value={vendorCode} className='form-control' readOnly />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className='font'>Vendor Name </label>
+                    <input value={vendorNameTitle} className='form-control' readOnly />
 
-                            // const formatDate = (date: any) => {
-                            //   if (!date) return "-";
-                            //   const d = new Date(date);
-                            //   return isNaN(d.getTime())
-                            //     ? "-"
-                            //     : d.toLocaleString("en-GB");
-                            // };
+                  </div>
+                  <div className='col-md-4'>
+                    <label className='font'>Vendor Site </label>.
+                    <input value={vendorSite} readOnly className="form-control" />
+                  </div>
+                </div>
+                <div className='row mb-20'>
+                  {/* <div className='col-md-4'>
+                                    <label className="font">Contract Type </label>
+                                    <input value={tenderNo} readOnly className="form-control" />
+                                </div> */}
+                  <div className='col-md-4'>
+                    <label className="font">Tender No </label>
+                    <input value={tenderNo} readOnly className="form-control" />
 
-                            const formatDate = (date: any) => {
-                              if (!date) return "-";
+                  </div>
+                  <div className='col-md-4'>
+                    <label className="font">Tender Date </label>
+                    <input type="date" value={tenderDate} readOnly className="form-control" />
+                  </div>
+                </div>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label className="font">Tender Type </label>
+                    <input value={tenderTypeText} readOnly className="form-control" />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className="font">Tender Amount </label>
+                    <input value={formatINR(tenderAmount)} readOnly className="form-control" />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className="font">EMD Amount </label>
+                    <input value={formatINR(emdAmount)} readOnly className="form-control" />
+                  </div>
 
-                              // Handle DD/MM/YYYY
-                              const parts = date.split("/");
-                              if (parts.length === 3) {
-                                const [day, month, year] = parts;
-                                const d = new Date(`${year}-${month}-${day}`);
+                </div>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label className="font">Currency </label>
+                    <input value={currencyText} readOnly className="form-control" />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className="font">Tender Closing Date </label>
+                    <input type="date" value={tenderClosingDate} readOnly className="form-control" />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className="font">EMD Percentage </label>
+                    <input value={emdPercentage} className="form-control" readOnly />
+                  </div>
 
-                                return isNaN(d.getTime())
-                                  ? "-"
-                                  : d.toLocaleDateString("en-GB");
-                              }
-
-                              return "-";
-                            };
-
-                            return (
-                              <tr key={index}>
-                                <td className="px-4 py-2">{item.CurrentApprover}</td>
-                                <td className="px-4 py-2">{item.ActionTaken}</td>
-                                <td className="px-4 py-2">{formatDate(item.Date)}</td>
-                                <td className="px-4 py-2">{item.Comment || "-"}</td>
-                              </tr>
-                            );
-                          })
-                        ) : (
+                </div>
+              </div>
+              <div className="heading1" style={{ marginTop: "10px" }}>
+                <label>Upload Documents</label>
+              </div>
+              <div className='main-formcontainer'>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label className='font'> Existing Attachments </label>
+                    {attachments.length === 0 ? (
+                      <div>-</div>
+                    ) : (
+                      <ul style={{ margin: 0, paddingLeft: 18 }}>
+                        {attachments.map((a) => (
+                          <li key={a.ServerRelativeUrl}>
+                            <a href={a.ServerRelativeUrl} target="_blank" rel="noreferrer">
+                              {a.FileName}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="heading1" style={{ marginTop: "10px" }}>
+                <label>Vouching Details</label>
+              </div>
+              <div className='main-formcontainer'>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label className='font'>Vouching Date </label>
+                    <input type="date" className='form-control' value={vouchingDate} readOnly />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className='font'>GL </label>
+                    <input value={glCode} readOnly className='form-control' />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className='font'>vendor Code </label>
+                    <input value={vendorCode} readOnly className="form-control" />
+                  </div>
+                </div>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label className="font">voucher No. </label>
+                    <input value={voucherNo} readOnly className="form-control" />
+                  </div>
+                </div>
+              </div>
+              <div className="heading1" style={{ marginTop: "10px" }}>
+                <label>UTR Details</label>
+              </div>
+              <div className='main-formcontainer'>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label className='font'>UTR No </label>
+                    <input type="text" className='form-control' value={utrNo} readOnly />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className='font'>UTR Date </label>
+                    <input type="date" value={utrDate} readOnly className='form-control' />
+                  </div>
+                </div>
+              </div>
+              <div className="heading1" style={{ marginTop: "10px" }}>
+                <label>Closure Details</label>
+              </div>
+              <div className='main-formcontainer'>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label className='font'>Date of Receipt <span className="Mantorystar">*</span> </label>
+                    <input type="date" className='form-control' value={dateOfReceipt} readOnly />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className='font'>Bank Account <span className="Mantorystar">*</span> </label>
+                    <input value={bankAccount} readOnly className='form-control' />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className='font'>Amount <span className="Mantorystar">*</span> </label>
+                    <input value={closureAmount} readOnly className='form-control' />
+                  </div>
+                  <div className='row mb-20'>
+                    <div className='col-md-4'>
+                      <label className='font'>Comments <span className="Mantorystar">*</span> </label>
+                      <textarea rows={3} value={closureComments} readOnly className='form-control' />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="heading1" style={{ marginTop: "10px" }}>
+                <label>Work Flow History</label>
+              </div>
+              <div className='main-formcontainer'>
+                <div className='row mb-20'>
+                  <div className='col-md-12'>
+                    <div className="overflow-x-auto">
+                      <table className="custom-table">
+                        <thead>
                           <tr>
-                            <td colSpan={4}>No history available</td>
+                            <th className="px-4 py-2">Action By</th>
+                            <th className="px-4 py-2">Action Taken</th>
+                            <th className="px-4 py-2">Date</th>
+                            <th className="px-4 py-2">Comment</th>
                           </tr>
-                        )}
-                      </tbody>
+                        </thead>
+                        <tbody>
+                          {wfHistory.length > 0 ? (
+                            wfHistory.map((item, index) => {
 
-                    </table>
+                              // const formatDate = (date: any) => {
+                              //   if (!date) return "-";
+                              //   const d = new Date(date);
+                              //   return isNaN(d.getTime())
+                              //     ? "-"
+                              //     : d.toLocaleString("en-GB");
+                              // };
+
+                              const formatDate = (date: any) => {
+                                if (!date) return "-";
+
+                                // Handle DD/MM/YYYY
+                                const parts = date.split("/");
+                                if (parts.length === 3) {
+                                  const [day, month, year] = parts;
+                                  const d = new Date(`${year}-${month}-${day}`);
+
+                                  return isNaN(d.getTime())
+                                    ? "-"
+                                    : d.toLocaleDateString("en-GB");
+                                }
+
+                                return "-";
+                              };
+
+                              return (
+                                <tr key={index}>
+                                  <td className="px-4 py-2">{item.CurrentApprover}</td>
+                                  <td className="px-4 py-2">{item.ActionTaken}</td>
+                                  <td className="px-4 py-2">{formatDate(item.Date)}</td>
+                                  <td className="px-4 py-2">{item.Comment || "-"}</td>
+                                </tr>
+                              );
+                            })
+                          ) : (
+                            <tr>
+                              <td colSpan={4}>No history available</td>
+                            </tr>
+                          )}
+                        </tbody>
+
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="heading1" style={{ marginTop: "10px" }}>
-              <label>Approval Action</label>
-            </div>
-            <div className='main-formcontainer'>
-              <div className='row mb-20'>
-                <div className='col-md-4'>
-                  <label className='font'>Comments <span className="Mantorystar">*</span> </label>
-                  <textarea
-                    rows={3}
-                    className="form-control"
-                    value={approvalRemark}
-                    onChange={(e) => setApprovalRemark(e.target.value)}
-                    placeholder="Enter approval / reject comments"
-                  />
+              <div className="heading1" style={{ marginTop: "10px" }}>
+                <label>Approval Action</label>
+              </div>
+              <div className='main-formcontainer'>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label className='font'>Comments <span className="Mantorystar">*</span> </label>
+                    <textarea
+                      rows={3}
+                      className="form-control"
+                      value={approvalRemark}
+                      onChange={(e) => setApprovalRemark(e.target.value)}
+                      placeholder="Enter approval / reject comments"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className='row my-3'>
-              <div className='col-md-12'>
-                <div style={{ display: "flex", justifyContent: "center", gap: "5px" }}>
-                  <button className="submit-btn" disabled={isSaving}
-                    onClick={() => handleAction("APPROVE")}
-                    title={`Set status to "${STATUS.APPROVED_NEXT}"`}>
-                    {isSaving ? "Saving..." : "Approve"}
-                  </button>
-                  <button
-                    className="reject-btn"
-                    disabled={isSaving}
-                    onClick={() => handleAction("REJECT")}
-                    title={`Send back to initiator (comment required)`}
-                  >
-                    Reject
-                  </button>
-                  <button className="reset-btn" onClick={() => history.push("/TreasuryLandingPage")}>Exit</button>
+              <div className='row my-3'>
+                <div className='col-md-12'>
+                  <div style={{ display: "flex", justifyContent: "center", gap: "5px" }}>
+                    <button className="submit-btn" disabled={isSaving}
+                      onClick={() => handleAction("APPROVE")}
+                      title={`Set status to "${STATUS.APPROVED_NEXT}"`}>
+                      {isSaving ? "Saving..." : "Approve"}
+                    </button>
+                    <button
+                      className="reject-btn"
+                      disabled={isSaving}
+                      onClick={() => handleAction("REJECT")}
+                      title={`Send back to initiator (comment required)`}
+                    >
+                      Reject
+                    </button>
+                    <button className="reset-btn" onClick={() => history.push("/TreasuryLandingPage")}>Exit</button>
+                  </div>
                 </div>
               </div>
             </div>

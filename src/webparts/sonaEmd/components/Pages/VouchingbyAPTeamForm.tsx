@@ -670,7 +670,7 @@ const VouchingbyAPTeamForm = (props: ISonaEmdProps) => {
               <img src={logo} />
               <h1>Vouching by AP Team </h1>
             </div>
-            <div className="headerApproval">
+            
               <div className="approvalFlow">
 
                 {/* Initiator */}
@@ -720,7 +720,6 @@ const VouchingbyAPTeamForm = (props: ISonaEmdProps) => {
                 })}
 
               </div>
-            </div>
             <div className='borderedbox'>
               {/* 🔹 Section Title */}
               <div className="heading1" style={{ marginTop: "10px" }}>

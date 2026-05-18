@@ -158,6 +158,7 @@ export const InitiatorDashboard: React.FC<ISonaEmdProps> = (
                 className="text-white"
               >
                 <tr>
+                  <th className="px-4 py-2">Action</th>
                   <th className="px-4 py-2">Request No.</th>
                   <th className="px-4 py-2">EmployeeCode</th>
                   <th className="px-4 py-2">Employee Name</th>
@@ -166,7 +167,6 @@ export const InitiatorDashboard: React.FC<ISonaEmdProps> = (
                   <th className="px-4 py-2">Vendor Name</th>
                   <th className="px-4 py-2">Amount</th>
                   <th className="px-4 py-2">Status</th>
-                  <th className="px-4 py-2">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -185,20 +185,6 @@ export const InitiatorDashboard: React.FC<ISonaEmdProps> = (
                 ) : (
                   paginatedData.map((item) => (
                     <tr key={item.ID}>
-                      <td className="px-4 py-2">{item.ForexNumber}</td>
-                      <td className="px-4 py-2">{item.EmployeeCode}</td>
-                      <td className="px-4 py-2">{item.EmployeeName}</td>
-                      <td className="px-4 py-2">{formatDate(item.RequestedOn)}</td>
-                      <td className="px-4 py-2">{item.Location}</td>
-                      <td className="px-4 py-2">{item.VendorName}</td>
-                      <td className="px-4 py-2">₹ {item.TotalAmount || "-"}</td>
-                      <td className="px-4 py-2">
-                        <span
-                          className={`status-badge ${item.Status?.replace(" ", "-")}`}
-                        >
-                          {item.Status}
-                        </span>
-                      </td>
                       <td className="px-4 py-2">
                         {item.Status === "Send back" ||
                           item.Status === "Draft" ? (
@@ -214,6 +200,20 @@ export const InitiatorDashboard: React.FC<ISonaEmdProps> = (
 
                           </>
                         )}
+                      </td>
+                      <td className="px-4 py-2">{item.ForexNumber}</td>
+                      <td className="px-4 py-2">{item.EmployeeCode}</td>
+                      <td className="px-4 py-2">{item.EmployeeName}</td>
+                      <td className="px-4 py-2">{formatDate(item.RequestedOn)}</td>
+                      <td className="px-4 py-2">{item.Location}</td>
+                      <td className="px-4 py-2">{item.VendorName}</td>
+                      <td className="px-4 py-2">₹ {item.TotalAmount || "-"}</td>
+                      <td className="px-4 py-2">
+                        <span
+                          className={`status-badge ${item.Status?.replace(" ", "-")}`}
+                        >
+                          {item.Status}
+                        </span>
                       </td>
                     </tr>
                   ))

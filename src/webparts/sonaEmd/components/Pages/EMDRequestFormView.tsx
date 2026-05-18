@@ -410,10 +410,25 @@ const EMDRequestFormView = (props: ISonaEmdProps) => {
               <img src={logo} />
               <h1>View EMD Issuance </h1>
             </div>
-            <div className="emd-hierarchy">
-              <div className="emd-step active-step">{employee.EmployeeName}</div>
+            <div className="approvalFlow">
+              <ul >
+                <li className="flowStep orange">
+                  {employee.EmployeeName}
+                </li>
+              </ul>
+              <ul >
+                <li className="flowStep orange">
+                  {employee.ReportingManager}
+                </li>
+              </ul>
+              <ul >
+                <li className="flowStep orange">
+                  {employee.HOD}
+                </li>
+              </ul>
+              {/* <div className="emd-step active-step">{employee.EmployeeName}</div>
               <div className="emd-step" style={{ marginLeft: "30px" }}>{employee.ReportingManager}</div>
-              <div className="emd-step" style={{ marginLeft: "30px" }}>{employee.HOD}</div>
+              <div className="emd-step" style={{ marginLeft: "30px" }}>{employee.HOD}</div> */}
             </div>
             <div className='borderedbox'>
               {/* 🔹 Section Title */}

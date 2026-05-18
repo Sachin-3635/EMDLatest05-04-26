@@ -263,6 +263,7 @@ export const MyRequests: React.FC<ISonaEmdProps> = (props: ISonaEmdProps) => {
                 className="text-white"
               >
                 <tr>
+                  <th className="px-4 py-2">View</th>
                   <th className="px-4 py-2">EMD Request No.</th>
                   <th className="px-4 py-2">Tender No.</th>
                   <th className="px-4 py-2">Tender Type</th>
@@ -271,7 +272,6 @@ export const MyRequests: React.FC<ISonaEmdProps> = (props: ISonaEmdProps) => {
                   <th className="px-4 py-2">EMD Amount</th>
                   <th className="px-4 py-2">Currency</th>
                   <th className="px-4 py-2">Status</th>
-                  <th className="px-4 py-2">View</th>
                 </tr>
               </thead>
               <tbody>
@@ -290,6 +290,16 @@ export const MyRequests: React.FC<ISonaEmdProps> = (props: ISonaEmdProps) => {
                 ) : (
                   paginatedData.map((item) => (
                     <tr key={item.Id}>
+                      <td className="px-4 py-2">
+                        {/*  Use real Id here so EMDRequestFormView can prefill */}
+                        {/* <Link to={`/EMDRequestFormView?ItemId=${item.Id}`}> */}
+                        <Link to={`/ViewForm?ItemId=${item.Id}`}>
+                          <img src={View} width={16} alt="View" />
+                        </Link>
+                        <Link to={`/EMDRequestFormEdit?ItemId=${item.Id}`}>
+                          {/* <img src={Edit} width={16} alt="Edit" /> */}
+                        </Link>
+                      </td>
                       <td className="px-4 py-2">{item?.Title ?? "-"}</td>
                       <td className="px-4 py-2">{item?.TenderNo ?? "-"}</td>
                       <td className="px-4 py-2">{item?.TenderType?.TenderType ?? "-"}</td>
@@ -304,16 +314,6 @@ export const MyRequests: React.FC<ISonaEmdProps> = (props: ISonaEmdProps) => {
                         {/* <span className={getStatusClass(item?.Status)}>
 
                         </span> */}
-                      </td>
-                      <td className="px-4 py-2">
-                        {/*  Use real Id here so EMDRequestFormView can prefill */}
-                        {/* <Link to={`/EMDRequestFormView?ItemId=${item.Id}`}> */}
-                        <Link to={`/ViewForm?ItemId=${item.Id}`}>
-                          <img src={View} width={16} alt="View" />
-                        </Link>
-                        <Link to={`/EMDRequestFormEdit?ItemId=${item.Id}`}>
-                          {/* <img src={Edit} width={16} alt="Edit" /> */}
-                        </Link>
                       </td>
                     </tr>
                   ))

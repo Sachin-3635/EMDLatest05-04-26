@@ -229,6 +229,7 @@ export const ClosureApprovalARDashboard: React.FC<ISonaEmdProps> = (props: ISona
                 className="text-white"
               >
                 <tr>
+                  <th className="px-4 py-2">View</th>
                   <th className="px-4 py-2">EMD Request No.</th>
                   <th className="px-4 py-2">Tender Type</th>
                   <th className="px-4 py-2">Tender No.</th>
@@ -236,8 +237,6 @@ export const ClosureApprovalARDashboard: React.FC<ISonaEmdProps> = (props: ISona
                   <th className="px-4 py-2">EMD Amount</th>
                   <th className="px-4 py-2">Currency</th>
                   <th className="px-4 py-2">Status</th>
-                  <th className="px-4 py-2">View</th>
-
                 </tr>
               </thead>
               <tbody>
@@ -256,23 +255,6 @@ export const ClosureApprovalARDashboard: React.FC<ISonaEmdProps> = (props: ISona
                 ) : (
                   paginatedData.map((item) => (
                     <tr key={item.ID}>
-                      {/* If no dedicated EMDRequestNo, fallback to Title/TenderNo/ID */}
-                      <td className="px-4 py-2">{item.Title || item.TenderNo || item.ID}</td>
-                      <td className="px-4 py-2">{item.TenderType?.Title || "-"}</td>
-                      <td className="px-4 py-2">{item.TenderNo || "-"}</td>
-                      <td className="px-4 py-2">{item.VendorName?.Name || "-"}</td>
-                      <td className="px-4 py-2">
-                        {item.EMDAmount
-                          ? toNumeric(item.EMDAmount).toLocaleString("en-IN")
-                          : "-"}
-                      </td>
-                      <td className="px-4 py-2">{item.Currency?.Currency || "-"}</td>
-                      <td className="px-4 py-2">
-                        {item.Status || "-"}
-                        {/* <span className={`status-badge ${item.Status?.replace(/\s+/g, "-")}`}>
-                          {item.Status || "-"}
-                        </span> */}
-                      </td>
                       <td className="px-4 py-2">
                         {/* Navigate to Closure Request Form using ItemId (same as your other dashboard) */}
                         <Link
@@ -292,6 +274,24 @@ export const ClosureApprovalARDashboard: React.FC<ISonaEmdProps> = (props: ISona
                           <img src={Edit} width={16} alt="Edit" />
                         </Link>
                       </td>
+                      {/* If no dedicated EMDRequestNo, fallback to Title/TenderNo/ID */}
+                      <td className="px-4 py-2">{item.Title || item.TenderNo || item.ID}</td>
+                      <td className="px-4 py-2">{item.TenderType?.Title || "-"}</td>
+                      <td className="px-4 py-2">{item.TenderNo || "-"}</td>
+                      <td className="px-4 py-2">{item.VendorName?.Name || "-"}</td>
+                      <td className="px-4 py-2">
+                        {item.EMDAmount
+                          ? toNumeric(item.EMDAmount).toLocaleString("en-IN")
+                          : "-"}
+                      </td>
+                      <td className="px-4 py-2">{item.Currency?.Currency || "-"}</td>
+                      <td className="px-4 py-2">
+                        {item.Status || "-"}
+                        {/* <span className={`status-badge ${item.Status?.replace(/\s+/g, "-")}`}>
+                          {item.Status || "-"}
+                        </span> */}
+                      </td>
+
                     </tr>
                   ))
                 )}
