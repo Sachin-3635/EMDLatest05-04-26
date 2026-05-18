@@ -87,6 +87,9 @@ const ClosureRequestForm = (props: ISonaEmdProps) => {
     const [currencyText, setCurrencyText] = useState<string>("");
     const [tenderClosingDate, setTenderClosingDate] = useState<string>("");
 
+    const [productType, setProductType] = useState<string>("");
+    const [modeofPayment, setModeofPayment] = useState<string>("");
+
     // Vouching details (AP Team) – read-only display
     const [vouchingDate, setVouchingDate] = useState<string>("");
     const [glCode, setGLCode] = useState<string>("");
@@ -224,6 +227,8 @@ const ClosureRequestForm = (props: ISonaEmdProps) => {
             "ID,Title,Status,Modified," +
             "EmployeeName,EmployeeCode,Department,Division,Location,RM,HOD,ContactNo,EmployeeStatus,Email," +
             "VendorCode,VendorSite," +
+            "ProductType/ProductType" +
+            "ModeofPayment/Mode" +
             "TenderNo,TenderDate,TenderAmount,EMDAmount,EMDPercentage,TenderClosingDate," +
             "TenderTypeId,TenderType/TenderType," +
             "VendorNameId,VendorName/Title,VendorName/Name" +
@@ -277,6 +282,8 @@ const ClosureRequestForm = (props: ISonaEmdProps) => {
                     "TenderAmount",
                     "EMDAmount",
                     "EMDPercentage",
+                    "ProductType/Id",
+                    "ProductType/ProductType",
                     "TenderClosingDate",
                     "TenderTypeId",
                     "VendorName/Id",
@@ -361,6 +368,9 @@ const ClosureRequestForm = (props: ISonaEmdProps) => {
             } else {
                 setEmdPercentage(details.EMDPercentage || "");
             }
+
+            setProductType(details.ProductType?.ProductType || "");
+            setModeofPayment(details.ModeofPayment?.Mode);
 
             // Lookups
             setVendorNameTitle(details.VendorName?.Name || "");
@@ -923,62 +933,71 @@ const ClosureRequestForm = (props: ISonaEmdProps) => {
                                 <div className='row mb-20'>
                                     <div className='col-md-4'>
                                         <label className='font'>Vendor Code </label>
-                                        <input value={vendorCode} className='form-control' readOnly />
+                                        <input value={vendorCode} className='form-control readonly' />
                                     </div>
                                     <div className='col-md-4'>
                                         <label className='font'>Vendor Name </label>
-                                        <input value={vendorNameTitle} className='form-control' readOnly />
+                                        <input value={vendorNameTitle} className='form-control readonly' />
 
                                     </div>
                                     <div className='col-md-4'>
                                         <label className='font'>Vendor Site </label>.
-                                        <input value={vendorSite} readOnly className="form-control" />
+                                        <input value={vendorSite} className="form-control readonly" />
                                     </div>
                                 </div>
                                 <div className='row mb-20'>
                                     {/* <div className='col-md-4'>
                                     <label className="font">Contract Type </label>
-                                    <input value={tenderNo} readOnly className="form-control" />
+                                    <input value={tenderNo}  className="form-control readonly" />
                                 </div> */}
                                     <div className='col-md-4'>
                                         <label className="font">Tender No </label>
-                                        <input value={tenderNo} readOnly className="form-control" />
+                                        <input value={tenderNo} className="form-control readonly" />
 
                                     </div>
                                     <div className='col-md-4'>
                                         <label className="font">Tender Date </label>
-                                        <input type="date" value={tenderDate} readOnly className="form-control" />
+                                        <input type="date" value={tenderDate} className="form-control readonly" />
+                                    </div>
+                                    <div className='col-md-4'>
+                                        <label className="font">Tender Type </label>
+                                        <input value={tenderTypeText} className="form-control readonly" />
                                     </div>
                                 </div>
                                 <div className='row mb-20'>
                                     <div className='col-md-4'>
-                                        <label className="font">Tender Type </label>
-                                        <input value={tenderTypeText} readOnly className="form-control" />
-                                    </div>
-                                    <div className='col-md-4'>
                                         <label className="font">Tender Amount </label>
-                                        <input value={formatINR(tenderAmount)} readOnly className="form-control" />
+                                        <input value={formatINR(tenderAmount)} className="form-control readonly" />
                                     </div>
                                     <div className='col-md-4'>
                                         <label className="font">EMD Amount </label>
-                                        <input value={formatINR(emdAmount)} readOnly className="form-control" />
+                                        <input value={formatINR(emdAmount)} className="form-control readonly" />
                                     </div>
-
+                                    <div className='col-md-4'>
+                                        <label className="font">Currency </label>
+                                        <input value={currencyText} className="form-control readonly" />
+                                    </div>
                                 </div>
                                 <div className='row mb-20'>
                                     <div className='col-md-4'>
-                                        <label className="font">Currency </label>
-                                        <input value={currencyText} readOnly className="form-control" />
-                                    </div>
-                                    <div className='col-md-4'>
                                         <label className="font">Tender Closing Date </label>
-                                        <input type="date" value={tenderClosingDate} readOnly className="form-control" />
+                                        <input type="date" value={tenderClosingDate} className="form-control readonly" />
                                     </div>
                                     <div className='col-md-4'>
                                         <label className="font">EMD Percentage </label>
-                                        <input value={emdPercentage} className="form-control" readOnly />
+                                        <input value={emdPercentage} className="form-control readonly" />
                                     </div>
+                                    <div className='col-md-4'>
+                                        <label className="font">Mode of Payment </label>
+                                        <input value={productType} className="form-control readonly" />
+                                    </div>
+                                </div>
+                                <div className="row mb-20">
 
+                                    <div className='col-md-4'>
+                                        <label className="font">Product Type </label>
+                                        <input type="text" value={modeofPayment} className="form-control readonly" />
+                                    </div>
                                 </div>
                             </div>
                             <div className="heading1" style={{ marginTop: "10px" }}>
@@ -988,21 +1007,21 @@ const ClosureRequestForm = (props: ISonaEmdProps) => {
                                 <div className='row mb-20'>
                                     <div className='col-md-4'>
                                         <label className='font'>Vouching Date </label>
-                                        <input type="date" className='form-control' value={vouchingDate} readOnly />
+                                        <input type="date" className='form-control' value={vouchingDate} />
                                     </div>
                                     <div className='col-md-4'>
                                         <label className='font'>GL </label>
-                                        <input value={glCode} readOnly className='form-control' />
+                                        <input value={glCode} className='form-control' />
                                     </div>
                                     <div className='col-md-4'>
                                         <label className='font'>vendor Code </label>
-                                        <input value={vendorCode} readOnly className="form-control" />
+                                        <input value={vendorCode} className="form-control" />
                                     </div>
                                 </div>
                                 <div className='row mb-20'>
                                     <div className='col-md-4'>
                                         <label className="font">voucher No. </label>
-                                        <input value={voucherNo} readOnly className="form-control" />
+                                        <input value={voucherNo} className="form-control" />
                                     </div>
                                 </div>
                             </div>
@@ -1012,12 +1031,12 @@ const ClosureRequestForm = (props: ISonaEmdProps) => {
                             <div className='main-formcontainer'>
                                 <div className='row mb-20'>
                                     <div className='col-md-4'>
-                                        <label className='font'>UTR No <span className="Manstory">*</span> </label>
-                                        <input className='form-control' value={utrNo} readOnly />
+                                        <label className='font'>UTR No <span className='Mantorystar'>*</span> </label>
+                                        <input className='form-control' value={utrNo} />
                                     </div>
                                     <div className='col-md-4'>
-                                        <label className='font'>UTR Date <span className="Manstory">*</span> </label>
-                                        <input type="date" value={utrDate} readOnly className='form-control' />
+                                        <label className='font'>UTR Date <span className='Mantorystar'>*</span> </label>
+                                        <input type="date" value={utrDate} className='form-control' />
                                     </div>
 
                                 </div>
@@ -1164,7 +1183,7 @@ const ClosureRequestForm = (props: ISonaEmdProps) => {
                             <div className='row my-3'>
                                 <div className='col-md-12'>
                                     <div style={{ display: "flex", justifyContent: "center", gap: "5px" }}>
-                                        <button className="reject-btn" disabled={isSaving} onClick={onCloseSubmit}>
+                                        <button className="submit-btn" disabled={isSaving} onClick={onCloseSubmit}>
                                             {isSaving ? "Saving..." : "Close"}
                                         </button>
                                         <button className="reset-btn" onClick={() => history.push("/TreasuryLandingPage")}>Exit</button>

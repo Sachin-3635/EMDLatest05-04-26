@@ -106,6 +106,8 @@ const ARClosureApprovalForm = (props: ISonaEmdProps) => {
   const [vendorNameTitle, setVendorNameTitle] = useState<string>("");
   const [tenderTypeText, setTenderTypeText] = useState<string>("");
   const [currencyText, setCurrencyText] = useState<string>("");
+  const [productType, setProductType] = useState<string>("");
+  const [modeofPayment, setModeofPayment] = useState<string>("");
   const [tenderClosingDate, setTenderClosingDate] = useState<string>("");
 
   // &&&&&&&&&&&&& To check Duplicate Tender Number &&&&&&&&&&&&&
@@ -217,6 +219,8 @@ const ARClosureApprovalForm = (props: ISonaEmdProps) => {
       "EmployeeName,EmployeeCode,Division,Department,Location,RM,HOD,ContactNo,EmployeeStatus,Email," +
       // EMD details
       "VendorCode,VendorSite," +
+      "ProductType/ProductType" +
+      "ModeofPayment/Mode" +
       "TenderNo,TenderDate,TenderAmount,EMDAmount,EMDPercentage,TenderClosingDate," +
       "TenderTypeId,TenderType/TenderType,TenderType/Title," +
       "VendorNameId,VendorName/Title,VendorName/Name," +
@@ -276,6 +280,10 @@ const ARClosureApprovalForm = (props: ISonaEmdProps) => {
           "TenderAmount",
           "EMDAmount",
           "EMDPercentage",
+          "ModeofPayment/Id",
+          "ModeofPayment/Mode",
+          "ProductType/Id",
+          "ProductType/ProductType",
           "TenderClosingDate",
           "TenderTypeId",
           "VendorNameId",
@@ -365,6 +373,8 @@ const ARClosureApprovalForm = (props: ISonaEmdProps) => {
         setEmdPercentage(details.EMDPercentage || "");
       }
 
+      setProductType(details.ProductType?.ProductType || "");
+      setModeofPayment(details.ModeofPayment?.Mode);
       // Lookups
       setVendorNameTitle(details.VendorName?.Name || "");
       setTenderTypeText(details.TenderType?.Title || details.TenderType?.TenderType || "");
@@ -984,62 +994,70 @@ const ARClosureApprovalForm = (props: ISonaEmdProps) => {
                 <div className='row mb-20'>
                   <div className='col-md-4'>
                     <label className='font'>Vendor Code </label>
-                    <input value={vendorCode} className='form-control' readOnly />
+                    <input value={vendorCode} className='form-control readonly' readOnly />
                   </div>
                   <div className='col-md-4'>
                     <label className='font'>Vendor Name </label>
-                    <input value={vendorNameTitle} className='form-control' readOnly />
+                    <input value={vendorNameTitle} className='form-control readonly' readOnly />
 
                   </div>
                   <div className='col-md-4'>
                     <label className='font'>Vendor Site </label>.
-                    <input value={vendorSite} readOnly className="form-control" />
+                    <input value={vendorSite} readOnly className="form-control readonly" />
                   </div>
                 </div>
                 <div className='row mb-20'>
                   {/* <div className='col-md-4'>
                                     <label className="font">Contract Type </label>
-                                    <input value={tenderNo} readOnly className="form-control" />
+                                    <input value={tenderNo} readOnly className="form-control readonly" />
                                 </div> */}
                   <div className='col-md-4'>
                     <label className="font">Tender No </label>
-                    <input value={tenderNo} readOnly className="form-control" />
+                    <input value={tenderNo} readOnly className="form-control readonly" />
 
                   </div>
                   <div className='col-md-4'>
                     <label className="font">Tender Date </label>
-                    <input type="date" value={tenderDate} readOnly className="form-control" />
+                    <input type="date" value={tenderDate} readOnly className="form-control readonly" />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className="font">Tender Type </label>
+                    <input value={tenderTypeText} readOnly className="form-control readonly" />
                   </div>
                 </div>
                 <div className='row mb-20'>
                   <div className='col-md-4'>
-                    <label className="font">Tender Type </label>
-                    <input value={tenderTypeText} readOnly className="form-control" />
-                  </div>
-                  <div className='col-md-4'>
                     <label className="font">Tender Amount </label>
-                    <input value={formatINR(tenderAmount)} readOnly className="form-control" />
+                    <input value={formatINR(tenderAmount)} readOnly className="form-control readonly" />
                   </div>
                   <div className='col-md-4'>
                     <label className="font">EMD Amount </label>
-                    <input value={formatINR(emdAmount)} readOnly className="form-control" />
+                    <input value={formatINR(emdAmount)} readOnly className="form-control readonly" />
                   </div>
-
+                  <div className='col-md-4'>
+                    <label className="font">Currency </label>
+                    <input value={currencyText} readOnly className="form-control readonly" />
+                  </div>
                 </div>
                 <div className='row mb-20'>
                   <div className='col-md-4'>
-                    <label className="font">Currency </label>
-                    <input value={currencyText} readOnly className="form-control" />
-                  </div>
-                  <div className='col-md-4'>
                     <label className="font">Tender Closing Date </label>
-                    <input type="date" value={tenderClosingDate} readOnly className="form-control" />
+                    <input type="date" value={tenderClosingDate} readOnly className="form-control readonly" />
                   </div>
                   <div className='col-md-4'>
                     <label className="font">EMD Percentage </label>
-                    <input value={emdPercentage} className="form-control" readOnly />
+                    <input value={emdPercentage} className="form-control readonly" readOnly />
                   </div>
-
+                  <div className='col-md-4'>
+                    <label className="font">Mode of Payment </label>
+                    <input value={productType} readOnly className="form-control readonly" />
+                  </div>
+                </div>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label className="font">Product Type </label>
+                    <input type="text" value={modeofPayment} readOnly className="form-control readonly" />
+                  </div>
                 </div>
               </div>
               <div className="heading1" style={{ marginTop: "10px" }}>
@@ -1072,21 +1090,21 @@ const ARClosureApprovalForm = (props: ISonaEmdProps) => {
                 <div className='row mb-20'>
                   <div className='col-md-4'>
                     <label className='font'>Vouching Date </label>
-                    <input type="date" className='form-control' value={vouchingDate} readOnly />
+                    <input type="date" className='form-control readonly' value={vouchingDate} readOnly />
                   </div>
                   <div className='col-md-4'>
                     <label className='font'>GL </label>
-                    <input value={glCode} readOnly className='form-control' />
+                    <input value={glCode} readOnly className='form-control readonly' />
                   </div>
                   <div className='col-md-4'>
                     <label className='font'>vendor Code </label>
-                    <input value={vendorCode} readOnly className="form-control" />
+                    <input value={vendorCode} readOnly className="form-control readonly" />
                   </div>
                 </div>
                 <div className='row mb-20'>
                   <div className='col-md-4'>
                     <label className="font">voucher No. </label>
-                    <input value={voucherNo} readOnly className="form-control" />
+                    <input value={voucherNo} readOnly className="form-control readonly" />
                   </div>
                 </div>
               </div>
@@ -1097,11 +1115,11 @@ const ARClosureApprovalForm = (props: ISonaEmdProps) => {
                 <div className='row mb-20'>
                   <div className='col-md-4'>
                     <label className='font'>UTR No </label>
-                    <input type="text" className='form-control' value={utrNo} readOnly />
+                    <input type="text" className='form-control readonly' value={utrNo} readOnly />
                   </div>
                   <div className='col-md-4'>
                     <label className='font'>UTR Date </label>
-                    <input type="date" value={utrDate} readOnly className='form-control' />
+                    <input type="date" value={utrDate} readOnly className='form-control readonly' />
                   </div>
                 </div>
               </div>
@@ -1112,20 +1130,20 @@ const ARClosureApprovalForm = (props: ISonaEmdProps) => {
                 <div className='row mb-20'>
                   <div className='col-md-4'>
                     <label className='font'>Date of Receipt <span className="Mantorystar">*</span> </label>
-                    <input type="date" className='form-control' value={dateOfReceipt} readOnly />
+                    <input type="date" className='form-control readonly' value={dateOfReceipt} readOnly />
                   </div>
                   <div className='col-md-4'>
                     <label className='font'>Bank Account <span className="Mantorystar">*</span> </label>
-                    <input value={bankAccount} readOnly className='form-control' />
+                    <input value={bankAccount} readOnly className='form-control readonly' />
                   </div>
                   <div className='col-md-4'>
                     <label className='font'>Amount <span className="Mantorystar">*</span> </label>
-                    <input value={closureAmount} readOnly className='form-control' />
+                    <input value={closureAmount} readOnly className='form-control readonly' />
                   </div>
                   <div className='row mb-20'>
                     <div className='col-md-4'>
                       <label className='font'>Comments <span className="Mantorystar">*</span> </label>
-                      <textarea rows={3} value={closureComments} readOnly className='form-control' />
+                      <textarea rows={3} value={closureComments} readOnly className='form-control readonly' />
                     </div>
                   </div>
                 </div>

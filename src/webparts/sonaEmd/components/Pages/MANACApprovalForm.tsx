@@ -860,10 +860,10 @@ const MANACApprovalForm = (props: ISonaEmdProps) => {
                 {employee.EmployeeName}
               </div> */}
               <ul >
-                  <li className="flowStep green">
+                <li className="flowStep green">
                   {employee.EmployeeName || "Initiator"}
-                  </li>
-                </ul>
+                </li>
+              </ul>
 
               {approverMatrix.map((step, index) => {
 
@@ -887,10 +887,10 @@ const MANACApprovalForm = (props: ISonaEmdProps) => {
                   //   <div>{step.Approver || step.ApproverName}</div>
                   // </div>
                   <ul key={index}>
-                      <li className={`flowStep ${stepClass}`}>
-                        {step.Approver || step.ApproverName}
-                      </li>
-                    </ul>
+                    <li className={`flowStep ${stepClass}`}>
+                      {step.Approver || step.ApproverName}
+                    </li>
+                  </ul>
                 );
               })}
 
@@ -969,7 +969,6 @@ const MANACApprovalForm = (props: ISonaEmdProps) => {
                       defaultValue={"All Selected"}
                       options={vendorCodeOptions}
                       selectedKey={vendorCodeKey}
-                      
                       onChange={(e, option) => {
                         if (option) {
                           setVendorCodeKey(option.key as number);
@@ -985,7 +984,7 @@ const MANACApprovalForm = (props: ISonaEmdProps) => {
                       options={vendorNameOptions}
                       selectedKey={vendorName}
                       onChange={(e, option) => option && setVendorName(option.key as number)}
-                      
+
                     />
                   </div>
                   <div className='col-md-4'>
@@ -1000,7 +999,7 @@ const MANACApprovalForm = (props: ISonaEmdProps) => {
                           setVendorSite(option.text);
                         }
                       }}
-                      
+
                     />
                   </div>
                 </div>
@@ -1008,7 +1007,7 @@ const MANACApprovalForm = (props: ISonaEmdProps) => {
                   <div className='col-md-4'>
                     <label className="font">Contract Type </label>
                     <input
-                      type="text" className='form-control'
+                      type="text" className='form-control readonly'
                       value={
                         contractTypeOptions.find(o => o.key === contractType)?.text || ""
                       }
@@ -1018,26 +1017,26 @@ const MANACApprovalForm = (props: ISonaEmdProps) => {
                   </div>
                   <div className='col-md-4'>
                     <label className="font">Tender No </label>
-                    <input value={vendor.TenderNo} className='form-control' readOnly />
+                    <input value={vendor.TenderNo} className='form-control readonly' readOnly />
                   </div>
                   <div className='col-md-4'>
                     <label className="font">Tender Date </label>
-                    <input type="date" value={vendor.TenderDate} readOnly className='form-control' />
+                    <input type="date" value={vendor.TenderDate} readOnly className='form-control readonly' />
 
                   </div>
                 </div>
                 <div className='row mb-20'>
                   {/* <div className='col-md-4'>
                     <label className="font">Tender Type </label>
-                    <input value={vendor.TenderAmount} readOnly className="form-control" />
+                    <input value={vendor.TenderAmount} readOnly className="form-control readonly" />
                   </div> */}
                   <div className='col-md-4'>
                     <label className="font">Tender Amount </label>
-                    <input value={vendor.TenderAmount} readOnly className="form-control" />
+                    <input value={vendor.TenderAmount} readOnly className="form-control readonly" />
                   </div>
                   <div className='col-md-4'>
                     <label className="font">EMD Amount </label>
-                    <input value={vendor.EMDAmount} readOnly className="form-control" />
+                    <input value={vendor.EMDAmount} readOnly className="form-control readonly" />
                   </div>
                   <div className='col-md-4'>
                     <label className="font">Currency </label>
@@ -1048,37 +1047,35 @@ const MANACApprovalForm = (props: ISonaEmdProps) => {
                       onChange={(e, option) => option && setCurrency(option.key as number)}
                     />
                   </div>
-                  <div className='row mb-20'>
-                    <div className='col-md-4'>
-                      <label className="font">Tender Closing Date </label>
-                      <input type="date" value={vendor.TenderClosingDate} readOnly className="form-control" />
-                    </div>
-                    <div className='col-md-4'>
-                      <label className="font">EMD Percentage </label>
-                      <input value={vendor.EMDPercentage} readOnly className="form-control" />
-                    </div>
-                    <div className='col-md-4'>
-                      <label className="font">Mode of Payment </label>
-                      <Dropdown
-                        className='formtext-control readonly'
-                        options={modeOfPaymentOptions}
-                        selectedKey={modeOfPayment}
-                        onChange={(e, option) => option && setModeOfPayment(option.key as number)}
-                        
-                      />
-                    </div>
+                </div>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label className="font">Tender Closing Date </label>
+                    <input type="date" value={vendor.TenderClosingDate} readOnly className="form-control readonly" />
                   </div>
-                  <div className='row mb-20'>
-                    <div className='col-md-4'>
-                      <label className="font">Product Type </label>
-                      <Dropdown
-                        className='formtext-control readonly'
-                        options={productTypeOptions}
-                        selectedKey={productType}
-                        onChange={(e, option) => option && setProductType(option.key as number)}
-                        
-                      />
-                    </div>
+                  <div className='col-md-4'>
+                    <label className="font">EMD Percentage </label>
+                    <input value={vendor.EMDPercentage} readOnly className="form-control readonly" />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className="font">Mode of Payment </label>
+                    <Dropdown
+                      className='formtext-control readonly'
+                      options={modeOfPaymentOptions}
+                      selectedKey={modeOfPayment}
+                      onChange={(e, option) => option && setModeOfPayment(option.key as number)}
+                    />
+                  </div>
+                </div>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
+                    <label className="font">Product Type </label>
+                    <Dropdown
+                      className='formtext-control readonly'
+                      options={productTypeOptions}
+                      selectedKey={productType}
+                      onChange={(e, option) => option && setProductType(option.key as number)}
+                    />
                   </div>
                 </div>
               </div>
@@ -1212,7 +1209,6 @@ const MANACApprovalForm = (props: ISonaEmdProps) => {
           </div>
         </div>
       </div>
-
     </div>
   );
 };

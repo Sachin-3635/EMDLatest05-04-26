@@ -228,7 +228,8 @@ export const APTeamDashboardClosedByAR: React.FC<ISonaEmdProps> = (props: ISonaE
                       <td className="px-4 py-2">
                         {/* Route ko aap apne AP/Approval flow ke mutabik change kar sakte ho */}
                         {/* Example: AR Closure Approval Form (read-only/approval) */}
-                        <Link to={{ pathname: "/EMDClosureRequestForm", search: `?ItemId=${item.Id}` }}>
+                        
+                        <Link to={{ pathname: "/ViewForm", search: `?ItemId=${item.Id}` }}>
                           <img src={View} width={16} alt="View" />
                         </Link>
                         <Link to={{ pathname: "/EMDClosureRequestForm", search: `?ItemId=${item.Id}` }}>

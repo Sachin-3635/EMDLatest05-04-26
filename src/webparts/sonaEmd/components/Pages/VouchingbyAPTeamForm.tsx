@@ -806,18 +806,18 @@ const VouchingbyAPTeamForm = (props: ISonaEmdProps) => {
                     <label className='font'>Vendor Code </label>
                     <Dropdown options={vendorCodeOptions}
                       className='formtext-control'
-                      selectedKey={vendorCodeKey} disabled />
+                      selectedKey={vendorCodeKey} />
                   </div>
                   <div className='col-md-4'>
                     <label className='font'>Vendor Name </label>
                     <Dropdown options={vendorNameOptions} className='formtext-control'
-                      selectedKey={vendorName} disabled />
+                      selectedKey={vendorName} />
 
                   </div>
                   <div className='col-md-4'>
                     <label className='font'>Vendor Site </label>.
                     <Dropdown options={vendorSiteOptions} className='formtext-control'
-                      selectedKey={vendorSiteKey} disabled />
+                      selectedKey={vendorSiteKey} />
 
                   </div>
                 </div>
@@ -825,30 +825,30 @@ const VouchingbyAPTeamForm = (props: ISonaEmdProps) => {
                   <div className='col-md-4'>
                     <label className="font">Contract Type </label>
                     <Dropdown options={contractTypeOptions} className='formtext-control'
-                      selectedKey={contractType} disabled />
+                      selectedKey={contractType} />
                   </div>
                   <div className='col-md-4'>
                     <label className="font">Tender No </label>
-                    <input value={vendor.TenderNo} className='form-control' readOnly />
+                    <input value={vendor.TenderNo} className='form-control readonly' readOnly />
                   </div>
                   <div className='col-md-4'>
                     <label className="font">Tender Date </label>
-                    <input type="date" value={vendor.TenderDate} readOnly className='form-control' />
+                    <input type="date" value={vendor.TenderDate} readOnly className='form-control readonly' />
 
                   </div>
                 </div>
                 <div className='row mb-20'>
                   <div className='col-md-4'>
                     <label className="font">Tender Type </label>
-                    <input value={vendor.TenderAmount} readOnly className="form-control" />
+                    <input value={vendor.TenderAmount} readOnly className="form-control readonly" />
                   </div>
                   <div className='col-md-4'>
                     <label className="font">Tender Amount </label>
-                    <input value={vendor.TenderAmount} readOnly className="form-control" />
+                    <input value={vendor.TenderAmount} readOnly className="form-control readonly" />
                   </div>
                   <div className='col-md-4'>
                     <label className="font">EMD Amount </label>
-                    <input value={vendor.EMDAmount} readOnly className="form-control" />
+                    <input value={vendor.EMDAmount} readOnly className="form-control readonly" />
                   </div>
 
                 </div>
@@ -858,16 +858,16 @@ const VouchingbyAPTeamForm = (props: ISonaEmdProps) => {
                     <label className="font">Currency </label>
                     <Dropdown options={currencyOptions}
                       className='formtext-control'
-                      selectedKey={currency} disabled />
+                      selectedKey={currency} />
 
                   </div>
                   <div className='col-md-4'>
                     <label className="font">Tender Closing Date </label>
-                    <input type="date" value={vendor.TenderClosingDate} readOnly className="form-control" />
+                    <input type="date" value={vendor.TenderClosingDate} readOnly className="form-control readonly" />
                   </div>
                   <div className='col-md-4'>
                     <label className="font">EMD Percentage </label>
-                    <input value={vendor.EMDPercentage} readOnly className="form-control" />
+                    <input value={vendor.EMDPercentage} readOnly className="form-control readonly" />
                   </div>
 
                 </div>
@@ -875,12 +875,12 @@ const VouchingbyAPTeamForm = (props: ISonaEmdProps) => {
                   <div className='col-md-4'>
                     <label className="font">Mode of Payment </label>
                     <Dropdown options={modeOfPaymentOptions} className='formtext-control'
-                      selectedKey={modeOfPayment} disabled />
+                      selectedKey={modeOfPayment} />
                   </div>
                   <div className='col-md-4'>
                     <label className="font">Product Type </label>
                     <Dropdown options={productTypeOptions} className='formtext-control'
-                      selectedKey={productType} disabled />
+                      selectedKey={productType} />
                   </div>
                 </div>
               </div>
