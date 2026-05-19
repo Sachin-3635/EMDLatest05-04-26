@@ -4,8 +4,8 @@ import { ISonaEmdProps } from "../ISonaEmdProps";
 import { useHistory, useLocation } from "react-router-dom";
 import SPCRUDOPS from "../../service/BAL/spcrud";
 import { sp } from "@pnp/sp";
-import logo from "../../assets/sona-comstarlogo.png";
 
+import logo from "../../assets/sona-comstarlogo.png";
 /** ===========================
  *   ROUTES & STATUS (CONFIG)
  *  =========================== */
@@ -116,11 +116,9 @@ const EMDClosureRequestForm = (props: ISonaEmdProps) => {
   const [tenderTypeText, setTenderTypeText] = useState<string>("");
   const [currencyText, setCurrencyText] = useState<string>("");
   const [tenderClosingDate, setTenderClosingDate] = useState<string>("");
-  const [productType, setProductType] = useState<string>("");
-  const [modeofPayment, setModeofPayment] = useState<string>("");
-  // const [modeOfPaymentText, setModeOfPaymentText] = useState<string>("");
+  const [modeOfPaymentText, setModeOfPaymentText] = useState<string>("");
   const [contractTypeText, setContractTypeText] = useState<string>("");
-  // const [productTypeText, setProductTypeText] = useState<string>("");
+  const [productTypeText, setProductTypeText] = useState<string>("");
 
   // Vouching details (display)
   const [vouchingDate, setVouchingDate] = useState<string>("");
@@ -228,8 +226,6 @@ const EMDClosureRequestForm = (props: ISonaEmdProps) => {
       "EmployeeName,EmployeeCode,Department,Division,Location,RM,HOD,ContactNo,EmployeeStatus,Email," +
       // EMD details
       "VendorCode,VendorSite," +
-      "ProductType/ProductType" +
-      "ModeofPayment/Mode" +
       "TenderNo,TenderDate,TenderAmount,EMDAmount,EMDPercentage,TenderClosingDate," +
       "TenderTypeId,TenderType/TenderType,TenderType/Title," +
       "VendorNameId,VendorName/Title,VendorName/Name," +
@@ -280,10 +276,6 @@ const EMDClosureRequestForm = (props: ISonaEmdProps) => {
         "TenderAmount",
         "EMDAmount",
         "EMDPercentage",
-        "ModeofPayment/Id",
-        "ModeofPayment/Mode",
-        "ProductType/Id",
-        "ProductType/ProductType",
         "TenderClosingDate",
         "TenderTypeId",
         "VendorNameId",
@@ -371,16 +363,13 @@ const EMDClosureRequestForm = (props: ISonaEmdProps) => {
         setEmdPercentage(details.EMDPercentage || "");
       }
 
-      setProductType(details.ProductType?.ProductType || "");
-      setModeofPayment(details.ModeofPayment?.Mode);
-
       // Lookups
       setVendorNameTitle(details.VendorName?.Name || "");
       setTenderTypeText(details.TenderType?.Title || details.TenderType?.TenderType || "");
       setCurrencyText(details.Currency?.Title || details.Currency?.Currency || "");
-      // setModeOfPaymentText(details.ModeofPayment?.Title || "");
+      setModeOfPaymentText(details.ModeofPayment?.Title || "");
       setContractTypeText(details.ContractType?.Title || "");
-      // setProductTypeText(details.ProductType?.Title || "");
+      setProductTypeText(details.ProductType?.Title || "");
 
       // Vouching details (AP display)
       const vDate = details.VouchingDate ? String(details.VouchingDate).split("T")[0] : "";
@@ -622,17 +611,12 @@ const EMDClosureRequestForm = (props: ISonaEmdProps) => {
 
       const currentUser =
         props.context?.pageContext?.user?.displayName || "Closure Team";
-      const today = new Date();
 
-      const formattedDate =
-        String(today.getDate()).padStart(2, '0') + '/' +
-        String(today.getMonth() + 1).padStart(2, '0') + '/' +
-        today.getFullYear();
       const newEntry = {
         CurrentApprover: currentUser,
         ActionTaken: "EMD Closed",
         Comment: closureComments || "Closure completed",
-        Date: formattedDate
+        Date: new Date().toISOString()
       };
 
       prevHistory.push(newEntry);
@@ -682,19 +666,21 @@ const EMDClosureRequestForm = (props: ISonaEmdProps) => {
             <div className="bordered">
               <img src={logo} />
               <h1>EMD Closure Request</h1>
-              {title ? <div style={{ marginTop: 4, color: "#666" }}>Ref: {title}</div> : null}
-              {currentStatus ? (
-                <div style={{ marginTop: 4, color: "#999", fontSize: 12 }}>
-                  Current Status: <b>{currentStatus}</b>
-                </div>
-              ) : null}
+              <div style={{marginLeft : "10px"}}>
+                {title ? <div style={{ marginTop: 4, color: "#666" }}>Ref: {title}</div> : null}
+                {currentStatus ? (
+                  <div style={{ marginTop: 4, color: "#999", fontSize: 12 }}>
+                    Current Status: <b>{currentStatus}</b>
+                  </div>
+                ) : null}
+              </div>
             </div>
             <div className="approvalFlow">
 
               {/* Initiator */}
-              <ul >
+              <ul>
                 <li className="flowStep green">
-                  {employee.EmployeeName || "Initiator"}
+                  {employee.EmployeeName}
                 </li>
               </ul>
 
@@ -722,7 +708,7 @@ const EMDClosureRequestForm = (props: ISonaEmdProps) => {
 
                 // 🟠 Current Pending
                 else if (index === firstPending) {
-                  stepClass = "orange";
+                  stepClass = "green";
                 }
 
                 return (
@@ -775,7 +761,7 @@ const EMDClosureRequestForm = (props: ISonaEmdProps) => {
                   </div>
                   <div className='col-md-4'>
                     <label htmlFor="RM" className='font'>RM</label> : &nbsp;&nbsp;
-                    <label className='fonttext'>  {employee.ReportingManager}</label>
+                    <label className='fonttext'>  {employee.RM || employee.ReportingManager}</label>
                   </div>
                   <div className='col-md-4'>
                     <label htmlFor="HOD" className='font'>HOD</label> : &nbsp;&nbsp;
@@ -816,14 +802,9 @@ const EMDClosureRequestForm = (props: ISonaEmdProps) => {
                   </div>
                 </div>
                 <div className='row mb-20'>
-                  {/* <div className='col-md-4'>
-                                    <label className="font">Contract Type </label>
-                                    <input value={tenderNo} readOnly className="form-control readonly" />
-                                </div> */}
                   <div className='col-md-4'>
                     <label className="font">Tender No </label>
                     <input value={tenderNo} readOnly className="form-control readonly" />
-
                   </div>
                   <div className='col-md-4'>
                     <label className="font">Tender Date </label>
@@ -850,22 +831,26 @@ const EMDClosureRequestForm = (props: ISonaEmdProps) => {
                 </div>
                 <div className='row mb-20'>
                   <div className='col-md-4'>
+                    <label className="font">Mode of Payment </label>
+                    <input readOnly className="form-control readonly" />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className="font">Contract Type </label>
+                    <input value={contractTypeText} readOnly className="form-control readonly" />
+                  </div>
+                  <div className='col-md-4'>
+                    <label className="font">Product Type </label>
+                    <input type="text" value={productTypeText} readOnly className="form-control readonly" />
+                  </div>
+                </div>
+                <div className='row mb-20'>
+                  <div className='col-md-4'>
                     <label className="font">Tender Closing Date </label>
                     <input type="date" value={tenderClosingDate} readOnly className="form-control readonly" />
                   </div>
                   <div className='col-md-4'>
                     <label className="font">EMD Percentage </label>
                     <input value={emdPercentage} className="form-control readonly" readOnly />
-                  </div>
-                  <div className='col-md-4'>
-                    <label className="font">Mode of Payment </label>
-                    <input value={productType} readOnly className="form-control readonly" />
-                  </div>
-                </div>
-                <div className='row mb-20'>
-                  <div className='col-md-4'>
-                    <label className="font">Product Type </label>
-                    <input type="text" value={modeofPayment} readOnly className="form-control readonly" />
                   </div>
                 </div>
               </div>
@@ -899,21 +884,21 @@ const EMDClosureRequestForm = (props: ISonaEmdProps) => {
                 <div className='row mb-20'>
                   <div className='col-md-4'>
                     <label className='font'>Vouching Date </label>
-                    <input type="date" className='form-control' value={vouchingDate} readOnly />
+                    <input type="date" className='form-control readonly' value={vouchingDate} readOnly />
                   </div>
                   <div className='col-md-4'>
                     <label className='font'>GL </label>
-                    <input value={glCode} readOnly className='form-control' />
+                    <input value={glCode} readOnly className='form-control readonly' />
                   </div>
                   <div className='col-md-4'>
                     <label className='font'>vendor Code </label>
-                    <input value={vendorCode} readOnly className="form-control" />
+                    <input value={vendorCode} readOnly className="form-control readonly" />
                   </div>
                 </div>
                 <div className='row mb-20'>
                   <div className='col-md-4'>
                     <label className="font">voucher No. </label>
-                    <input value={voucherNo} readOnly className="form-control" />
+                    <input value={voucherNo} readOnly className="form-control readonly" />
                   </div>
                 </div>
               </div>
@@ -924,11 +909,11 @@ const EMDClosureRequestForm = (props: ISonaEmdProps) => {
                 <div className='row mb-20'>
                   <div className='col-md-4'>
                     <label className='font'>UTR No </label>
-                    <input className='form-control' value={utrNo} readOnly />
+                    <input className='form-control readonly' value={utrNo} readOnly />
                   </div>
                   <div className='col-md-4'>
                     <label className='font'>UTR Date </label>
-                    <input type="date" value={utrDate} readOnly className='form-control' />
+                    <input type="date" value={utrDate} readOnly className='form-control readonly' />
                   </div>
                 </div>
               </div>
@@ -939,20 +924,20 @@ const EMDClosureRequestForm = (props: ISonaEmdProps) => {
                 <div className='row mb-20'>
                   <div className='col-md-4'>
                     <label className='font'>Date of Receipt <span className="Mantorystar">*</span> </label>
-                    <input type="date" className='form-control' value={dateOfReceipt} readOnly />
+                    <input type="date" className='form-control readonly' value={dateOfReceipt} readOnly />
                   </div>
                   <div className='col-md-4'>
                     <label className='font'>Bank Account <span className="Mantorystar">*</span> </label>
-                    <input value={bankAccount} readOnly className='form-control' />
+                    <input value={bankAccount} readOnly className='form-control readonly' />
                   </div>
                   <div className='col-md-4'>
                     <label className='font'>Amount <span className="Mantorystar">*</span> </label>
-                    <input value={closureAmount} readOnly className='form-control' />
+                    <input value={closureAmount} readOnly className='form-control readonly' />
                   </div>
                   <div className='row mb-20'>
                     <div className='col-md-4'>
                       <label className='font'>Comments <span className="Mantorystar">*</span> </label>
-                      <textarea rows={3} value={closureComments} readOnly className='form-control' />
+                      <label className="fonttext textbox formtext-control readonly" style={{ width: "100%", height: "auto" }}>{closureComments}</label>
                     </div>
                   </div>
                 </div>
@@ -1042,12 +1027,11 @@ const EMDClosureRequestForm = (props: ISonaEmdProps) => {
                   </div>
                 </div>
               </div>
-
               <div className='row my-3'>
                 <div className='col-md-12'>
                   <div style={{ display: "flex", justifyContent: "center", gap: "5px" }}>
                     <button
-                      className="reject-btn"
+                      className="submit-btn"
                       onClick={onCloseEMD}
                     >
                       {isSaving ? "Closing..." : "Close EMD"}

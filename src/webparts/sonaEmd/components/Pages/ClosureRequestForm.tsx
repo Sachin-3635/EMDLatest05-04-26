@@ -282,6 +282,8 @@ const ClosureRequestForm = (props: ISonaEmdProps) => {
                     "TenderAmount",
                     "EMDAmount",
                     "EMDPercentage",
+                    "ModeofPayment/Id",
+                    "ModeofPayment/Mode",
                     "ProductType/Id",
                     "ProductType/ProductType",
                     "TenderClosingDate",
@@ -307,7 +309,7 @@ const ClosureRequestForm = (props: ISonaEmdProps) => {
                     "ApprovalMatrix",
                     "WFHistory"
                 )
-                .expand("VendorName", "TenderType", "Currency")
+                .expand("VendorName", "TenderType", "Currency","ModeofPayment", "ProductType")
                 .get();
             return pnp;
         } catch (e) {
@@ -989,14 +991,14 @@ const ClosureRequestForm = (props: ISonaEmdProps) => {
                                     </div>
                                     <div className='col-md-4'>
                                         <label className="font">Mode of Payment </label>
-                                        <input value={productType} className="form-control readonly" />
+                                        <input value={modeofPayment} className="form-control readonly" />
                                     </div>
                                 </div>
                                 <div className="row mb-20">
 
                                     <div className='col-md-4'>
                                         <label className="font">Product Type </label>
-                                        <input type="text" value={modeofPayment} className="form-control readonly" />
+                                        <input type="text" value={productType} className="form-control readonly" />
                                     </div>
                                 </div>
                             </div>
@@ -1007,21 +1009,21 @@ const ClosureRequestForm = (props: ISonaEmdProps) => {
                                 <div className='row mb-20'>
                                     <div className='col-md-4'>
                                         <label className='font'>Vouching Date </label>
-                                        <input type="date" className='form-control' value={vouchingDate} />
+                                        <input type="date" className='form-control readonly' value={vouchingDate} />
                                     </div>
                                     <div className='col-md-4'>
                                         <label className='font'>GL </label>
-                                        <input value={glCode} className='form-control' />
+                                        <input value={glCode} className='form-control readonly' />
                                     </div>
                                     <div className='col-md-4'>
                                         <label className='font'>vendor Code </label>
-                                        <input value={vendorCode} className="form-control" />
+                                        <input value={vendorCode} className="form-control readonly" />
                                     </div>
                                 </div>
                                 <div className='row mb-20'>
                                     <div className='col-md-4'>
                                         <label className="font">voucher No. </label>
-                                        <input value={voucherNo} className="form-control" />
+                                        <input value={voucherNo} className="form-control readonly" />
                                     </div>
                                 </div>
                             </div>
@@ -1032,11 +1034,11 @@ const ClosureRequestForm = (props: ISonaEmdProps) => {
                                 <div className='row mb-20'>
                                     <div className='col-md-4'>
                                         <label className='font'>UTR No <span className='Mantorystar'>*</span> </label>
-                                        <input className='form-control' value={utrNo} />
+                                        <input className='form-control readonly' value={utrNo} />
                                     </div>
                                     <div className='col-md-4'>
                                         <label className='font'>UTR Date <span className='Mantorystar'>*</span> </label>
-                                        <input type="date" value={utrDate} className='form-control' />
+                                        <input type="date" value={utrDate} className='form-control readonly' />
                                     </div>
 
                                 </div>
